@@ -76,7 +76,7 @@ class Footer extends Component
                                             <img src="{{ asset('images/footer/cdofull.png') }}" class="img-fluid mb-2 mb-lg-0" alt="cdo-full" width="150px">
                                         </div>
                                         <div class="col-12 col-lg d-flex justify-content-lg-end align-items-center">
-                                            <a href="https://cagayandeoro.gov.ph/" type="button" class="btn btn-warning btn-rounded btn-fw" target="_blank">Visit Official Website</a>
+                                            <a href="https://cagayandeoro.gov.ph/" role="button" class="btn btn-warning btn-rounded btn-fw" target="_blank">Visit Official Website</a>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -84,7 +84,7 @@ class Footer extends Component
                                             <img src="{{ asset('images/footer/risev2.png') }}" class="img-fluid mb-2 mb-lg-0" alt="cdo-full" width="150px">
                                         </div>
                                         <div class="col-12 col-lg d-flex justify-content-lg-end align-items-center">
-                                            <a href="https://cagayandeoro.gov.ph/index.php/news/the-city-mayor/rise1.html" type="button" class="btn btn-info btn-rounded btn-fw">Learn RISE Platform</a>
+                                            <a href="https://cagayandeoro.gov.ph/index.php/news/the-city-mayor/rise1.html" role="button" class="btn btn-info btn-rounded btn-fw">Learn RISE Platform</a>
                                         </div>
                                     </div>
                                 </div>
