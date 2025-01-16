@@ -6,6 +6,13 @@ use Livewire\Component;
 
 class Topbar extends Component
 {
+    public $title;
+
+    public function mount($title)
+    {
+        $this->title = $title;
+    }
+
     public function render()
     {
         return <<<'HTML'
@@ -39,7 +46,7 @@ class Topbar extends Component
                             <!--begin::Page title-->
                             <div class="page-title d-flex flex-column align-items-start justify-content-center flex-wrap me-lg-20 pb-2 pb-lg-0" data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', lg: '#kt_header_wrapper'}">
                                 <!--begin::Heading-->
-                                <h1 class="text-dark fw-bolder my-1 fs-3 lh-1">Dashboard</h1>
+                                <h1 class="text-dark fw-bolder my-1 fs-3 lh-1">{{ $title ?? 'Page Title' }}</h1>
                                 <!--end::Heading-->
                             </div>
                             <!--end::Page title=-->

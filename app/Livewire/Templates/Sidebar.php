@@ -22,7 +22,7 @@ class Sidebar extends Component
                     <!--begin::Primary menu-->
                     <div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-6" data-kt-menu="true">
                         <div class="menu-item py-3">
-                            <a class="menu-link active menu-center" href="../../demo4/dist/index.html" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+                            <a class="menu-link active menu-center" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
                                     <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen001.svg-->
                                     <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -112,7 +112,7 @@ class Sidebar extends Component
                                     </div>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link" href="../../demo4/dist/apps/customers/view.html">
+                                    <a class="menu-link" href="{{ route('user-management') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>

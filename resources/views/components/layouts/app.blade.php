@@ -41,7 +41,7 @@
             <livewire:templates.sidebar />
 
             <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
-                <livewire:templates.topbar />
+                <livewire:templates.topbar :title="$title" />
 
                 <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
                     <!--begin::Container-->
