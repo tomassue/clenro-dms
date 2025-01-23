@@ -11,7 +11,7 @@ class Sidebar extends Component
         return <<<'HTML'
         <div>
             <!-- Sidebar -->
-            <div id="kt_aside" class="aside bg-primary" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="auto" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_aside_toggle">
+            <div id="kt_aside" class="aside bg-primary2" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="auto" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_aside_toggle">
                 <div class="aside-logo d-none d-lg-flex flex-column align-items-center flex-column-auto py-8" id="kt_aside_logo">
                     <a href="../../demo4/dist/index.html">
                         <img alt="Logo" src="assets/media/logos/logo-demo4.svg" class="h-55px" />
@@ -22,7 +22,7 @@ class Sidebar extends Component
                     <!--begin::Primary menu-->
                     <div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-6" data-kt-menu="true">
                         <div class="menu-item py-3">
-                            <a class="menu-link active menu-center" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+                            <a class="menu-link {{ request()->is('dashboard') ? 'active' : '' }} menu-center" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
                                     <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen001.svg-->
                                     <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -112,7 +112,15 @@ class Sidebar extends Component
                                     </div>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link" href="{{ route('user-management') }}">
+                                    <a class="menu-link active" href="{{ route('user-management') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">User Management</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link" href="#">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>

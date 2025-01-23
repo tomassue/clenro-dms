@@ -33,6 +33,60 @@
     <link href="{{ asset('plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
+
+    <!-- begin::Plugins -->
+    <link rel="stylesheet" href="{{ asset('plugins/sweetalert2/sweetalert2.min.css') }}">
+    <!-- end::Plugins -->
+
+    <style>
+        .bg-primary2 {
+            --bs-bg-opacity: 1;
+            background-color: #639a56 !important;
+        }
+
+        .aside .menu>.menu-item>.menu-link.active .menu-icon .svg-icon svg [fill]:not(.permanent):not(g) {
+            transition: fill .3s ease;
+            fill: #639a56 !important;
+        }
+
+        .menu-state-primary .menu-item .menu-link:hover:not(.disabled):not(.active) .menu-title,
+        .menu-state-primary .menu-item.hover>.menu-link:not(.disabled):not(.active) .menu-title {
+            color: #639a56;
+        }
+
+        .menu-state-bullet-primary .menu-item .menu-link:hover:not(.disabled):not(.active) .menu-bullet .bullet,
+        .menu-state-bullet-primary .menu-item.hover>.menu-link:not(.disabled):not(.active) .menu-bullet .bullet {
+            background-color: #639a56;
+        }
+
+        .menu-state-primary .menu-item .menu-link.active .menu-title {
+            color: #639a56;
+        }
+
+        .menu-state-bullet-primary .menu-item .menu-link.active .menu-bullet .bullet {
+            background-color: #639a56;
+        }
+
+        .btn-check:active+.btn.btn-primary,
+        .btn-check:checked+.btn.btn-primary,
+        .btn.btn-primary.active,
+        .btn.btn-primary.show,
+        .btn.btn-primary:active:not(.btn-active),
+        .btn.btn-primary:focus:not(.btn-active),
+        .btn.btn-primary:hover:not(.btn-active),
+        .show>.btn.btn-primary {
+            color: #fff;
+            border-color: rgb(63, 99, 55);
+            background-color: rgb(63, 99, 55) !important;
+        }
+
+        /* Buttons */
+        .btn.btn-primary {
+            color: rgb(255, 255, 255);
+            border-color: #639a56;
+            background-color: #639a56;
+        }
+    </style>
 </head>
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-disabled">
@@ -67,6 +121,40 @@
 
     <script src="{{ asset('plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('js/scripts.bundle.js') }}"></script>
+
+    <!-- begin::Plugins -->
+    <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    <!-- end::Plugins -->
 </body>
+
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('success', (message) => {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: message.message
+            });
+        });
+
+        Livewire.on('error', () => {
+            Swal.fire({
+                title: "Error",
+                text: "Something went wrong.",
+                icon: "error"
+            });
+        });
+    });
+</script>
 
 </html>
