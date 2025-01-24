@@ -39,6 +39,60 @@
     <!-- end::Plugins -->
 
     <style>
+        /* Random Profile Picture */
+        .profile-picture {
+            width: 50px;
+            /* Adjust the size as needed */
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            /* Adjust the font size as needed */
+            font-weight: bold;
+            color: white;
+            background-color: #3498db;
+            /* Default color if dynamic color is not set */
+        }
+
+        /* Optional: Dynamic color classes */
+        /* Teal */
+        .bg-color-1 {
+            background-color: #1abc9c;
+        }
+
+        /* Red */
+        .bg-color-2 {
+            background-color: #e74c3c;
+        }
+
+        /* Yellow */
+        .bg-color-3 {
+            background-color: rgb(182, 165, 89);
+        }
+
+        /* Orange */
+        .bg-color-4 {
+            background-color: #f39c12;
+        }
+
+        /* Green */
+        .bg-color-5 {
+            background-color: #2ecc71;
+        }
+
+        /* End Random Profile Picture */
+
+        /* Buttons */
+        .btn.btn-primary {
+            color: rgb(255, 255, 255);
+            border-color: #639a56;
+            background-color: #639a56;
+        }
+
+        /* End Buttons */
+
         .bg-primary2 {
             --bs-bg-opacity: 1;
             background-color: #639a56 !important;
@@ -78,13 +132,6 @@
             color: #fff;
             border-color: rgb(63, 99, 55);
             background-color: rgb(63, 99, 55) !important;
-        }
-
-        /* Buttons */
-        .btn.btn-primary {
-            color: rgb(255, 255, 255);
-            border-color: #639a56;
-            background-color: #639a56;
         }
     </style>
 </head>

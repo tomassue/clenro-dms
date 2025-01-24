@@ -60,6 +60,9 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                            <div class="mt-3 mb-5">
+                                {{ $users->links() }}
+                            </div>
                         </div>
                     </div>
                     <!--end::Items-->

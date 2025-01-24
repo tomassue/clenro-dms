@@ -29,6 +29,11 @@ class UserManagement extends Component
         ];
     }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function clear()
     {
         $this->reset();
