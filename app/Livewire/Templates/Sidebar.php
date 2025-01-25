@@ -13,8 +13,8 @@ class Sidebar extends Component
             <!-- Sidebar -->
             <div id="kt_aside" class="aside bg-primary2" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="auto" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_aside_toggle">
                 <div class="aside-logo d-none d-lg-flex flex-column align-items-center flex-column-auto py-8" id="kt_aside_logo">
-                    <a href="../../demo4/dist/index.html">
-                        <img alt="Logo" src="assets/media/logos/logo-demo4.svg" class="h-55px" />
+                    <a href="{{ route('dashboard') }}">
+                        <img alt="Logo" src="{{ asset('images/cdo-seal.png') }}" class="h-55px" />
                     </a>
                 </div>
 
@@ -51,7 +51,7 @@ class Sidebar extends Component
                                     </div>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link" href="../../demo4/dist/authentication/extended/multi-steps-sign-up.html">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'incoming.requests' ? 'active' : '' }}" href="{{ route('incoming.requests') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
@@ -124,7 +124,7 @@ class Sidebar extends Component
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">User Management</span>
+                                        <span class="menu-title">Other...</span>
                                     </a>
                                 </div>
                             </div>
