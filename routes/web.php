@@ -2,6 +2,7 @@
 
 use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Requests;
+use App\Livewire\Settings\Category;
 use App\Livewire\Settings\UserManagement;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Settings
     Route::get('/settings/user-management', UserManagement::class)->name('user-management');
+    Route::get('/settings/category', Category::class)->name('category');
 });
