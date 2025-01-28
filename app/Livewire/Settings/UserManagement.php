@@ -81,14 +81,16 @@ class UserManagement extends Component
         }
     }
 
-    public function readUser(User $user_id)
+    public function readUser($user_id)
     {
         try {
             $this->editMode = true;
 
             $this->user_id = $user_id;
+
+            $user = User::withTrashed()->findOrFail($user_id);
             $this->fill(
-                $this->user_id->only('name', 'username', 'email')
+                $user->only('name', 'username', 'email')
             );
 
             $this->dispatch('show-userModal');

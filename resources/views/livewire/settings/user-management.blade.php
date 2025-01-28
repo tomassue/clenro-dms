@@ -18,7 +18,7 @@
                 <!--end::Header-->
                 <!--begin::Body-->
                 <div class="card-body d-flex flex-column">
-                    <div class="row justify-content-between">
+                    <div class="row g-5 justify-content-between">
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>

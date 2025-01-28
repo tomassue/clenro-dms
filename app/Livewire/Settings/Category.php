@@ -74,15 +74,18 @@ class Category extends Component
         }
     }
 
-    public function readCategory(CategoryModel $category)
+    public function readCategory($category_id)
     {
         try {
+            $this->editMode = true;
+
+            $this->category_id = $category_id;
+
+            $category = CategoryModel::withTrashed()->findOrFail($category_id);
             $this->fill(
                 $category->only('category_name')
             );
-            $this->category_id = $category->id;
 
-            $this->editMode = true;
             $this->dispatch('show-categoryModal');
         } catch (\Throwable $th) {
             //throw $th;

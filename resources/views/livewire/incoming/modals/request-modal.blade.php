@@ -10,7 +10,7 @@
                 <form class="form" wire:submit="{{ $editMode ? 'updateIncomingRequest' : 'createIncomingRequest' }}">
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Incoming Request No.</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="incoming_request_no" />
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="incoming_request_no" disabled />
                         @error('incoming_request_no')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -36,7 +36,7 @@
                         @enderror
                     </div>
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Date Returned</label>
+                        <label class="required fw-bold fs-6 mb-2">Return Date</label>
                         <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_returned" />
                         @error('date_returned')
                         <div class="fv-plugins-message-container invalid-feedback">
@@ -46,11 +46,11 @@
                     </div>
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
-                        <select class="form-select" aria-label="Select example" wire:model="category_id">
+                        <select class="form-select" aria-label="Select example" wire:model.live="category_id">
                             <option>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            @foreach($category_select as $item)
+                            <option value="{{ $item->id }}">{{ $item->category_name }}</option>
+                            @endforeach
                         </select>
                         @error('category_id')
                         <div class="fv-plugins-message-container invalid-feedback">
@@ -58,13 +58,13 @@
                         </div>
                         @enderror
                     </div>
-                    <div class="col-12 mb-10">
+                    <div class="col-12 mb-10" style="display: {{ $sub_category_select->count() != 0 ? '' : 'none'}}">
                         <label class="required fw-bold fs-6 mb-2">Sub-category</label>
                         <select class="form-select" aria-label="Select example" wire:model="sub_category_id">
                             <option>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            @foreach($sub_category_select as $item)
+                            <option value="{{ $item->id }}">{{ $item->sub_category_name }}</option>
+                            @endforeach
                         </select>
                         @error('sub_category_id')
                         <div class="fv-plugins-message-container invalid-feedback">
@@ -76,9 +76,9 @@
                         <label class="required fw-bold fs-6 mb-2">Venue</label>
                         <select class="form-select" aria-label="Select example" wire:model="venue_id">
                             <option>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            @foreach($venue_select as $item)
+                            <option value="{{ $item->id }}">{{ $item->venue_name }}</option>
+                            @endforeach
                         </select>
                         @error('venue_id')
                         <div class="fv-plugins-message-container invalid-feedback">

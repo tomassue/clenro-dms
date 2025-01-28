@@ -18,7 +18,7 @@
                 <!--end::Header-->
                 <!--begin::Body-->
                 <div class="card-body d-flex flex-column">
-                    <div class="row justify-content-between">
+                    <div class="row g-5 justify-content-between">
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
@@ -45,14 +45,31 @@
                                     @forelse($incoming_requests as $item)
                                     <tr>
                                         <td>{{ $item->incoming_request_no }}</td>
-                                        <td>{{ $item->date_requested }}</td>
-                                        <td>{{ $item->date_returned }}</td>
+                                        <td>{{ $item->formatted_date_requested }}</td>
+                                        <td>{{ $item->formatted_date_returned }}</td>
                                         <td>{{ $item->office_or_barangay_or_organization_name }}</td>
-                                        <td>{{ $item->category_id }}</td>
-                                        <td>{{ $item->sub_category_id }}</td>
-                                        <td>{{ $item->status_id }}</td>
+                                        <td>{{ $item->category->category_name }}</td>
+                                        <td>{{ $item->sub_category->sub_category_name }}</td>
+                                        <td>
+                                            <span class="badge 
+                                            @if($item->status->status_name == 'pending')
+                                            badge-light-danger
+                                            @elseif($item->status->status_name == 'processed')
+                                            badge-light-primary
+                                            @elseif($item->status->status_name == 'forwarded')
+                                            badge-light-warning
+                                            @elseif($item->status->status_name == 'completed')
+                                            badge-light-success
+                                            @elseif($item->status->status_name == 'cancelled')
+                                            badge-light-dark
+                                            @endif
+                                            text-capitalize">
+                                                {{ $item->status->status_name }}
+                                            </span>
+                                        </td>
                                         <td>
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readIncomingRequest({{ $item->id }})">Edit</a>
+                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="viewIncomingRequest({{ $item->id }})">View</a>
                                         </td>
                                     </tr>
                                     @empty
@@ -83,8 +100,14 @@
 @script
 <script>
     $wire.on('show-incomingRequestModal', () => {
-        console.log('show-incomingRequestModal');
         $('#incomingRequestModal').modal('show');
+
+        //! NOT WORKING
+        if ($editMode === false) {
+            console.log('generate');
+            $wire.generateIncomingRequestNo(); // Call generateIncomingRequestNo()
+        }
+        console.log('DONT generate');
     });
 
     $wire.on('hide-incomingRequestModal', () => {
