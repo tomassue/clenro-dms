@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ref_category', function (Blueprint $table) {
+        Schema::create('tbl_incoming_documents', function (Blueprint $table) {
             $table->id();
-            $table->string('category_type');
-            $table->string('category_name');
+            $table->string('category_id'); // foreign_key
+            $table->text('info');
+            $table->json('file_id');
+            $table->date('date');
+            $table->string('status_id'); // foreign_key
+            $table->text('remarks');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ref_category');
+        Schema::dropIfExists('tbl_incoming_documents');
     }
 };

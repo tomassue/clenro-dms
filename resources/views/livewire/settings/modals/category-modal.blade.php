@@ -9,6 +9,20 @@
             <div class="modal-body">
                 <form class="form" wire:submit="{{ $editMode ? 'updateCategory' : 'createCategory' }}">
                     <div class="col-12 mb-10">
+                        <label class="required fw-bold fs-6 mb-2">Category Type</label>
+                        <select class="form-select" aria-label="Select example" wire:model="category_type_id">
+                            <option>Open this select menu</option>
+                            @foreach($category_type_select as $item)
+                            <option class="text-capitalize" value="{{ $item->id }}">{{ $item->category_type_name }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_type_id')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Name</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="category_name" />
                         @error('category_name')

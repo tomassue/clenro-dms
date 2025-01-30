@@ -5,6 +5,7 @@ namespace App\Livewire\Incoming;
 use App\Models\CategoryModel;
 use App\Models\FilesModel;
 use App\Models\IncomingRequestModel;
+use App\Models\StatusModel;
 use App\Models\SubCategoryModel;
 use App\Models\VenueModel;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Activitylog\Models\Activity;
 
 #[Title('Incoming Requests')]
 class Requests extends Component
@@ -21,8 +23,24 @@ class Requests extends Component
 
     public $editMode;
     public $incoming_request_id;
-    public $search;
-    public $incoming_request_no, $office_or_barangay_or_organization_name, $date_requested, $date_returned, $actual_returned_date, $category_id, $sub_category_id, $venue_id, $time_started, $time_ended, $contact_person_name, $contact_person_number, $description, $file_id = [], $status_id;
+    public $search,
+        $filter_status;
+    public $incoming_request_no,
+        $office_or_barangay_or_organization_name,
+        $date_requested,
+        $date_returned,
+        $actual_returned_date,
+        $category_id,
+        $sub_category_id,
+        $venue_id,
+        $time_started,
+        $time_ended,
+        $contact_person_name,
+        $contact_person_number,
+        $description,
+        $file_id = [],
+        $status_id;
+    public $document_history = [];
 
     public function rules()
     {
@@ -82,14 +100,18 @@ class Requests extends Component
                 'incoming_requests' => $this->loadIncomingRequests(),
                 'category_select' => $this->loadCategorySelect(),
                 'sub_category_select' => $this->loadSubCategorySelect(),
-                'venue_select' => $this->loadVenueSelect()
+                'venue_select' => $this->loadVenueSelect(),
+                'status_select' => $this->loadStatusSelect()
             ]
         );
     }
 
     public function loadIncomingRequests()
     {
-        return IncomingRequestModel::paginate(10);
+        return IncomingRequestModel::when($this->filter_status, function ($query) {
+            $query->where('status_id', $this->filter_status);
+        })
+            ->paginate(10);
     }
 
     public function loadCategorySelect()
@@ -103,13 +125,17 @@ class Requests extends Component
             $query->where('category_id', $this->category_id);
         }, function ($query) {
             $query->whereNull('id'); // No results
-        })
-            ->get();
+        })->get();
     }
 
     public function loadVenueSelect()
     {
         return VenueModel::all();
+    }
+
+    public function loadStatusSelect()
+    {
+        return StatusModel::all();
     }
 
     public function createIncomingRequest()
@@ -159,6 +185,7 @@ class Requests extends Component
         }
     }
 
+    //* Reading data for updating after.
     public function readIncomingRequest($incoming_request_id)
     {
         try {
@@ -180,13 +207,75 @@ class Requests extends Component
                     'time_ended',
                     'contact_person_name',
                     'contact_person_number',
-                    'description'
+                    'description',
+                    'status_id'
                 )
             );
 
             $this->dispatch('show-incomingRequestModal');
         } catch (\Throwable $th) {
             // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function updateIncomingRequest()
+    {
+        try {
+            $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
+
+            DB::transaction(function () use ($incoming_request) {
+                $incoming_request->incoming_request_no = $this->incoming_request_no;
+                $incoming_request->office_or_barangay_or_organization_name = $this->office_or_barangay_or_organization_name;
+                $incoming_request->date_requested = $this->date_requested;
+                $incoming_request->date_returned = $this->date_returned;
+                $incoming_request->category_id = $this->category_id;
+                $incoming_request->sub_category_id = $this->sub_category_id;
+                $incoming_request->venue_id = $this->venue_id;
+                $incoming_request->time_started = $this->time_started;
+                $incoming_request->time_ended = $this->time_ended;
+                $incoming_request->contact_person_name = $this->contact_person_name;
+                $incoming_request->contact_person_number = $this->contact_person_number;
+                $incoming_request->description = $this->description;
+
+                $incoming_request->status_id = $this->status_id;
+                $incoming_request->save();
+            });
+
+            $this->clear();
+            $this->dispatch('hide-incomingRequestModal');
+            $this->dispatch('success', message: 'Incoming Request updated successfully.');
+        } catch (\Throwable $th) {
+            //throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function readDocumentHistory($incoming_request_id)
+    {
+        try {
+            // Fetch all statuses in a key-value pair: [status_id => status_name]
+            $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+
+            $this->document_history = Activity::where('subject_type', IncomingRequestModel::class)
+                ->where('subject_id', $incoming_request_id)
+                ->where('log_name', 'incoming_request')
+                ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($item) use ($statusMap) {
+                    $oldStatusId = $item->properties['old']['status_id'] ?? null;
+                    $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+
+                    return [
+                        'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'updated_by' => $item->causer ? $item->causer->name : 'System'
+                    ];
+                });
+
+            $this->dispatch('show-documentHistoryModal');
+        } catch (\Throwable $th) {
             $this->dispatch('error');
         }
     }

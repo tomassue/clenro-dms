@@ -17,6 +17,24 @@
                         </div>
                         @enderror
                     </div>
+
+                    <!--begin: CHANGE STATUS -->
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
+                        <label class="required fw-bold fs-6 mb-2">Status</label>
+                        <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
+                            <option>Open this select menu</option>
+                            @foreach($status_select as $item)
+                            <option value="{{ $item->id }}">{{ $item->status_name }}</option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+                    <!--end: CHANGE STATUS -->
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Office/Brgy/Org</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="office_or_barangay_or_organization_name" />
@@ -60,10 +78,10 @@
                     </div>
                     <div class="col-12 mb-10" style="display: {{ $sub_category_select->count() != 0 ? '' : 'none'}}">
                         <label class="required fw-bold fs-6 mb-2">Sub-category</label>
-                        <select class="form-select" aria-label="Select example" wire:model="sub_category_id">
+                        <select class="form-select" aria-label="Select example" wire:model.live="sub_category_id">
                             <option>Open this select menu</option>
                             @foreach($sub_category_select as $item)
-                            <option value="{{ $item->id }}">{{ $item->sub_category_name }}</option>
+                            <option value="{{ $item->id }}" {{ $item->id == $sub_category_id ? 'selected' : '' }}>{{ $item->sub_category_name }}</option>
                             @endforeach
                         </select>
                         @error('sub_category_id')

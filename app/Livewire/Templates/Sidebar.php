@@ -55,15 +55,15 @@ class Sidebar extends Component
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Request</span>
+                                        <span class="menu-title">Requests</span>
                                     </a>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link" href="../../demo4/dist/authentication/extended/multi-steps-sign-up.html">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'incoming.documents' ? 'active' : '' }}" href="{{ route('incoming.documents') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Document</span>
+                                        <span class="menu-title">Documents</span>
                                     </a>
                                 </div>
                             </div>

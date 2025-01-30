@@ -5,10 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class IncomingRequestModel extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
 
     protected $table = 'tbl_incoming_requests';
 
@@ -28,6 +30,14 @@ class IncomingRequestModel extends Model
         'file_id',
         'status_id'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('incoming_request')
+            ->logOnly(['*'])
+            ->logOnlyDirty();
+    }
 
     protected static function boot()
     {

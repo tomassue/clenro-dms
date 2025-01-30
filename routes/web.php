@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Dashboard;
+use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
 use App\Livewire\Settings\Category;
 use App\Livewire\Settings\SubCategory;
@@ -21,7 +22,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
+    // Incoming
     Route::get('incoming/requests', Requests::class)->name('incoming.requests');
+    Route::get('incoming/documents', Documents::class)->name('incoming.documents');
 
     // Settings
     Route::get('/settings/user-management', UserManagement::class)->name('user-management');

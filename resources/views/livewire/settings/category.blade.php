@@ -31,6 +31,7 @@
                             <table class="table table-rounded table-striped border gy-7 gs-7 align-middle">
                                 <thead>
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                        <th>Category Type</th>
                                         <th>Category Name</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -39,6 +40,7 @@
                                 <tbody>
                                     @forelse($categories as $index=>$item)
                                     <tr>
+                                        <td class="text-capitalize">{{ str_replace("_", " ", $item->category_type) }}</td>
                                         <td>{{ $item->category_name }}</td>
                                         <td>
                                             <span class="badge {{ $item->deleted_at ? 'badge-light-danger' : 'badge-light-success' }}">{{ $item->deleted_at ? 'Inactive' : 'Active' }}</span>

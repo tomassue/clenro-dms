@@ -3,6 +3,7 @@
 namespace App\Livewire\Settings;
 
 use App\Models\CategoryModel;
+use App\Models\CategoryTypeModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Title;
@@ -17,11 +18,13 @@ class Category extends Component
     public $editMode;
     public $search;
     public $category_id;
-    public $category_name;
+    public $category_type_id,
+        $category_name;
 
     public function rules()
     {
         return [
+            //TODO: Add a rule where type and name should be unique.
             'category_name' => ['required', Rule::unique('ref_category', 'category_name')->ignore($this->category_id)]
         ];
     }
@@ -42,15 +45,22 @@ class Category extends Component
         return view(
             'livewire.settings.category',
             [
-                'categories' => $this->loadCategory()
+                'categories' => $this->loadCategory(),
+                'category_type_select' => $this->loadCategoryTypeSelect()
             ]
         );
+    }
+
+    public function loadCategoryTypeSelect()
+    {
+        return CategoryTypeModel::all();
     }
 
     public function loadCategory()
     {
         return CategoryModel::withTrashed()
             ->where('category_name', 'like', '%' . $this->search . '%')
+            ->where('category_type_id', 'like', '%' . $this->search . '%')
             ->paginate(10);
     }
 
@@ -61,6 +71,7 @@ class Category extends Component
         try {
             DB::transaction(function () {
                 $category = new CategoryModel();
+                $category->category_type_id = $this->category_type_id;
                 $category->category_name = $this->category_name;
                 $category->save();
             });
@@ -83,7 +94,10 @@ class Category extends Component
 
             $category = CategoryModel::withTrashed()->findOrFail($category_id);
             $this->fill(
-                $category->only('category_name')
+                $category->only(
+                    'category_type_id',
+                    'category_name'
+                )
             );
 
             $this->dispatch('show-categoryModal');
@@ -100,6 +114,7 @@ class Category extends Component
         try {
             DB::transaction(function () {
                 $category = CategoryModel::find($this->category_id);
+                $category->category_type_id = $this->category_type_id;
                 $category->category_name = $this->category_name;
                 $category->save();
             });
