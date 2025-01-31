@@ -24,7 +24,7 @@
                             <div class="col-12 mb-10">
                                 <label class="fw-bold fs-6 mb-2">Filter</label>
                                 <select class="form-select text-capitalize" aria-label="Select example" wire:model.live="filter_status">
-                                    <option>-Status-</option>
+                                    <option value="">-Status-</option>
                                     @foreach($status_select as $item)
                                     <option value="{{ $item->id }}">{{ $item->status_name }}</option>
                                     @endforeach
@@ -58,7 +58,7 @@
                                 <tbody>
                                     @forelse($incoming_documents as $item)
                                     <tr>
-                                        <td>{{ $item->category_id }}</td>
+                                        <td>{{ $item->category->category_name }}</td>
                                         <td>{{ $item->info }}</td>
                                         <td>
                                             <span class="badge 
@@ -105,6 +105,8 @@
     <!--end::Row-->
 
     @include('livewire.incoming.modals.document-modal')
+
+    @include('livewire.modals.document-history-modal')
 </div>
 
 @script
@@ -119,6 +121,12 @@
 
     $wire.on('show-documentHistoryModal', () => {
         $('#documentHistoryModal').modal('show');
+    });
+
+    /* -------------------------------------------------------------------------- */
+
+    $wire.on('read-file', (url) => {
+        window.open(event.detail.url, '_blank'); // Open the signed URL in a new tab
     });
 
     /* -------------------------------------------------------------------------- */

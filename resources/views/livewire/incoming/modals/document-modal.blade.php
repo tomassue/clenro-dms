@@ -12,12 +12,12 @@
                     <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
                         <label class="required fw-bold fs-6 mb-2">Status</label>
                         <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
-                            <option>Open this select menu</option>
+                            <option value="">Open this select menu</option>
                             @foreach($status_select as $item)
                             <option value="{{ $item->id }}">{{ $item->status_name }}</option>
                             @endforeach
                         </select>
-                        @error('category_id')
+                        @error('status_id')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>
@@ -28,7 +28,7 @@
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
-                            <option>Open this select menu</option>
+                            <option value="">Open this select menu</option>
                             @foreach($category_select as $item)
                             <option value="{{ $item->id }}">{{ $item->category_name }}</option>
                             @endforeach
@@ -42,20 +42,9 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Document Info</label>
-                        <textarea class="form-control" wire:model="info" rows="4"></textarea>
+                        <!-- <textarea class="form-control" wire:model="info" rows="4"></textarea> -->
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="info">
                         @error('info')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10">
-                        <label class="fw-bold fs-6 mb-2">File(s)</label>
-                        <div wire:ignore>
-                            <input type="file" class="form-control files" multiple data-allow-reorder="true">
-                        </div>
-                        @error('description')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>
@@ -74,7 +63,8 @@
 
                     <div class="col-12 mb-10">
                         <label class="fw-bold fs-6 mb-2">Remarks</label>
-                        <textarea class="form-control" wire:model="remarks" rows="4"></textarea>
+                        <!-- <textarea class="form-control" wire:model="remarks" rows="4"></textarea> -->
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="remarks">
                         @error('remarks')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -82,6 +72,42 @@
                         @enderror
                     </div>
 
+                    <div class="col-12 mb-10">
+                        <label class="fw-bold fs-6 mb-2">File(s)</label>
+                        <div wire:ignore>
+                            <input type="file" class="form-control files" multiple data-allow-reorder="true">
+                        </div>
+                        @error('file_id')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }}">
+                        <table class="table table-row-dashed table-row-gray-300 gy-7">
+                            <thead>
+                                <tr class="fw-bolder fs-6 text-gray-800">
+                                    <th width="80%">File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($preview_file_id as $item)
+                                <tr>
+                                    <td>{{ $item->file_name }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-info" wire:click="readFile({{ $item->id }})">View</a>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="2" class="text-center">No files.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="clear">Close</button>

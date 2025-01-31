@@ -29,6 +29,11 @@ class IncomingDocumentModel extends Model
             ->logOnlyDirty();
     }
 
+    public function category()
+    {
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+    }
+
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');

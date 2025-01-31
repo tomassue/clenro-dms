@@ -18,7 +18,7 @@ return new class extends Migration
             $table->json('file_id');
             $table->date('date');
             $table->string('status_id'); // foreign_key
-            $table->text('remarks');
+            $table->text('remarks')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

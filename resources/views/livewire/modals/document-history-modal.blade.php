@@ -11,7 +11,7 @@
                     <table class="table table-rounded table-striped border gy-7 gs-7 align-middle">
                         <thead>
                             <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
-                                <th>No.</th>
+                                <th>Date</th>
                                 <th>Status</th>
                                 <th>Updated By</th>
                             </tr>
@@ -19,7 +19,7 @@
                         <tbody>
                             @forelse($document_history as $item)
                             <tr>
-                                <td>{{ $item['incoming_request_no'] }}</td>
+                                <td>{{ $item['updated_at'] }}</td>
                                 <td>
                                     <span class="badge 
                                             @if($item['status'] == 'pending')

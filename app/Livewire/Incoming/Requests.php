@@ -8,6 +8,7 @@ use App\Models\IncomingRequestModel;
 use App\Models\StatusModel;
 use App\Models\SubCategoryModel;
 use App\Models\VenueModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -65,6 +66,10 @@ class Requests extends Component
             $rules['sub_category_id'] = 'required';
         }
 
+        if ($this->editMode) {
+            $rules['status_id'] = 'required';
+        }
+
         return $rules;
     }
 
@@ -75,6 +80,7 @@ class Requests extends Component
             'sub_category_id' => 'sub-category',
             'venue_id' => 'venue',
             'date_returned' => 'return date',
+            'status_id' => 'status'
         ];
     }
 
@@ -253,6 +259,8 @@ class Requests extends Component
 
     public function updateIncomingRequest()
     {
+        $this->validate($this->rules(), [], $this->attributes());
+
         try {
             $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
 
@@ -321,7 +329,8 @@ class Requests extends Component
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
 
                     return [
-                        'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+                        // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+                        'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
                         'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
                         'updated_by' => $item->causer ? $item->causer->name : 'System'
                     ];

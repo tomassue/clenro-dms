@@ -8,6 +8,23 @@
             </div>
             <div class="modal-body">
                 <form class="form" wire:submit="{{ $editMode ? 'updateIncomingRequest' : 'createIncomingRequest' }}">
+                    <!--begin: CHANGE STATUS -->
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
+                        <label class="required fw-bold fs-6 mb-2">Status</label>
+                        <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
+                            <option value="">Open this select menu</option>
+                            @foreach($status_select as $item)
+                            <option value="{{ $item->id }}">{{ $item->status_name }}</option>
+                            @endforeach
+                        </select>
+                        @error('status_id')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+                    <!--end: CHANGE STATUS -->
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Incoming Request No.</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="incoming_request_no" disabled />
@@ -17,23 +34,6 @@
                         </div>
                         @enderror
                     </div>
-
-                    <!--begin: CHANGE STATUS -->
-                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
-                        <label class="required fw-bold fs-6 mb-2">Status</label>
-                        <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
-                            <option>Open this select menu</option>
-                            @foreach($status_select as $item)
-                            <option value="{{ $item->id }}">{{ $item->status_name }}</option>
-                            @endforeach
-                        </select>
-                        @error('category_id')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-                    <!--end: CHANGE STATUS -->
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Office/Brgy/Org</label>
@@ -68,7 +68,7 @@
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
-                            <option>Open this select menu</option>
+                            <option value="">Open this select menu</option>
                             @foreach($category_select as $item)
                             <option value="{{ $item->id }}">{{ $item->category_name }}</option>
                             @endforeach
@@ -83,7 +83,7 @@
                     <div class="col-12 mb-10" style="display: {{ $sub_category_select->count() != 0 ? '' : 'none'}}">
                         <label class="required fw-bold fs-6 mb-2">Sub-category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="sub_category_id">
-                            <option>Open this select menu</option>
+                            <option value="">Open this select menu</option>
                             @foreach($sub_category_select as $item)
                             <option value="{{ $item->id }}" {{ $item->id == $sub_category_id ? 'selected' : '' }}>{{ $item->sub_category_name }}</option>
                             @endforeach
@@ -98,7 +98,7 @@
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Venue</label>
                         <select class="form-select" aria-label="Select example" wire:model="venue_id">
-                            <option>Open this select menu</option>
+                            <option value="">Open this select menu</option>
                             @foreach($venue_select as $item)
                             <option value="{{ $item->id }}">{{ $item->venue_name }}</option>
                             @endforeach
@@ -152,7 +152,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Description</label>
-                        <textarea class="form-control" wire:model="description" rows="4"></textarea>
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="description" />
                         @error('description')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
