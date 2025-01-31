@@ -44,6 +44,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Date Requested</label>
                         <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_requested" />
@@ -53,6 +54,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Return Date</label>
                         <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_returned" />
@@ -62,6 +64,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
@@ -76,6 +79,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10" style="display: {{ $sub_category_select->count() != 0 ? '' : 'none'}}">
                         <label class="required fw-bold fs-6 mb-2">Sub-category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="sub_category_id">
@@ -90,6 +94,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Venue</label>
                         <select class="form-select" aria-label="Select example" wire:model="venue_id">
@@ -104,6 +109,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Time Started</label>
                         <input type="time" class="form-control mb-3 mb-lg-0" wire:model="time_started" />
@@ -113,6 +119,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Time Ended</label>
                         <input type="time" class="form-control mb-3 mb-lg-0" wire:model="time_ended" />
@@ -122,6 +129,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Person (Name)</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_name" />
@@ -131,6 +139,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Person (No.)</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_number" />
@@ -140,6 +149,7 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Description</label>
                         <textarea class="form-control" wire:model="description" rows="4"></textarea>
@@ -149,16 +159,42 @@
                         </div>
                         @enderror
                     </div>
+
                     <div class="col-12 mb-10">
                         <label class="fw-bold fs-6 mb-2">File(s)</label>
                         <div wire:ignore>
                             <input type="file" class="form-control files" multiple data-allow-reorder="true">
                         </div>
-                        @error('description')
+                        @error('file_id')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>
                         @enderror
+                    </div>
+
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }}">
+                        <table class="table table-row-dashed table-row-gray-300 gy-7">
+                            <thead>
+                                <tr class="fw-bolder fs-6 text-gray-800">
+                                    <th width="80%">File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($preview_file_id as $item)
+                                <tr>
+                                    <td>{{ $item->file_name }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-info" wire:click="readFile({{ $item->id }})">View</a>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="2" class="text-center">No files.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
             </div>
             <div class="modal-footer">

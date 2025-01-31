@@ -15,4 +15,9 @@ class CategoryModel extends Model
         'category_type_id',
         'category_name'
     ];
+
+    public function categoryType()
+    {
+        return $this->belongsTo(CategoryTypeModel::class, 'category_type_id', 'id');
+    }
 }

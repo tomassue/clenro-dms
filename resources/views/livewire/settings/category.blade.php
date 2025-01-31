@@ -40,7 +40,7 @@
                                 <tbody>
                                     @forelse($categories as $index=>$item)
                                     <tr>
-                                        <td class="text-capitalize">{{ str_replace("_", " ", $item->category_type) }}</td>
+                                        <td class="text-capitalize">{{ str_replace("_", " ", $item->categoryType->category_type_name) }}</td>
                                         <td>{{ $item->category_name }}</td>
                                         <td>
                                             <span class="badge {{ $item->deleted_at ? 'badge-light-danger' : 'badge-light-success' }}">{{ $item->deleted_at ? 'Inactive' : 'Active' }}</span>

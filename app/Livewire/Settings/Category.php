@@ -24,8 +24,14 @@ class Category extends Component
     public function rules()
     {
         return [
-            //TODO: Add a rule where type and name should be unique.
-            'category_name' => ['required', Rule::unique('ref_category', 'category_name')->ignore($this->category_id)]
+            'category_type_id' => 'required',
+            'category_name' => [
+                'required',
+                Rule::unique('ref_category')->where(function ($query) {
+                    return $query->where('category_type_id', $this->category_type_id);
+                })
+                    ->ignore($this->category_id, 'id'),
+            ]
         ];
     }
 
@@ -58,9 +64,10 @@ class Category extends Component
 
     public function loadCategory()
     {
-        return CategoryModel::withTrashed()
+        return CategoryModel::with('categoryType')
             ->where('category_name', 'like', '%' . $this->search . '%')
             ->where('category_type_id', 'like', '%' . $this->search . '%')
+            ->withTrashed()
             ->paginate(10);
     }
 

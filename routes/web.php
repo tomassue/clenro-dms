@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
@@ -19,6 +20,9 @@ Auth::routes(['register' => false]); //! NOT WORKING
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    // Controller
+    Route::get('/file/view/{id}', [FileController::class, 'viewFile'])->name('file.view')->middleware('signed');
 
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
 

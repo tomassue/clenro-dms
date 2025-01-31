@@ -10,6 +10,7 @@ use App\Models\SubCategoryModel;
 use App\Models\VenueModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -40,6 +41,7 @@ class Requests extends Component
         $description,
         $file_id = [],
         $status_id;
+    public $preview_file_id = [];
     public $document_history = [];
 
     public function rules()
@@ -59,7 +61,7 @@ class Requests extends Component
             'description' => 'required'
         ];
 
-        if ($this->category_id) {
+        if ($this->category_id && $this->loadSubCategorySelect()->count() != 0) {
             $rules['sub_category_id'] = 'required';
         }
 
@@ -80,6 +82,9 @@ class Requests extends Component
     {
         $this->reset();
         $this->resetValidation();
+
+        // Reset Plugins
+        $this->dispatch('reset-files');
     }
 
     public function updatedSearch()
@@ -108,15 +113,17 @@ class Requests extends Component
 
     public function loadIncomingRequests()
     {
-        return IncomingRequestModel::when($this->filter_status, function ($query) {
-            $query->where('status_id', $this->filter_status);
-        })
+        return IncomingRequestModel::query()
+            ->when($this->filter_status, function ($query) {
+                $query->where('status_id', $this->filter_status);
+            })
             ->paginate(10);
     }
 
     public function loadCategorySelect()
     {
-        return CategoryModel::all();
+        return CategoryModel::where('category_type_id', 1)
+            ->get();
     }
 
     public function loadSubCategorySelect()
@@ -212,9 +219,34 @@ class Requests extends Component
                 )
             );
 
+            if ($incoming_request->file_id) {
+                $this->preview_file_id = []; // unset it first
+
+                foreach (json_decode($incoming_request->file_id) as $item) {
+                    $files = FilesModel::findOrFail($item);
+                    $this->preview_file_id[] = $files;
+                }
+            }
+
             $this->dispatch('show-incomingRequestModal');
         } catch (\Throwable $th) {
             // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function readFile($file_id)
+    {
+        try {
+            $signedURL = URL::temporarySignedRoute(
+                'file.view',
+                now()->addMinutes(10),
+                ['id' => $file_id]
+            );
+
+            $this->dispatch('read-file', url: $signedURL);
+        } catch (\Throwable $th) {
+            //throw $th;
             $this->dispatch('error');
         }
     }
@@ -238,6 +270,27 @@ class Requests extends Component
                 $incoming_request->contact_person_number = $this->contact_person_number;
                 $incoming_request->description = $this->description;
 
+                //* File upload
+                $file_id = [];
+
+                foreach ($this->file_id ?? [] as $file) {
+                    $files = new FilesModel();
+                    $files->file_name = $file->getClientOriginalName();
+                    $files->file_size = $file->getSize();
+                    $files->file_type = $file->getMimeType();
+                    $files->file_content = file_get_contents($file->path());
+                    $files->user_id = Auth::user()->id;
+                    $files->save();
+
+                    $file_id[] = $files->id;
+                }
+
+                if (!empty($file_id)) {
+                    $existing_file_id = json_decode($incoming_request->file_id, true) ?? [];
+                    $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                    $incoming_request->file_id = json_encode($updated_file_id);
+                }
+
                 $incoming_request->status_id = $this->status_id;
                 $incoming_request->save();
             });
@@ -246,7 +299,7 @@ class Requests extends Component
             $this->dispatch('hide-incomingRequestModal');
             $this->dispatch('success', message: 'Incoming Request updated successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            // throw $th;
             $this->dispatch('error');
         }
     }

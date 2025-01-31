@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('status_id'); // foreign_key
             $table->text('remarks');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
