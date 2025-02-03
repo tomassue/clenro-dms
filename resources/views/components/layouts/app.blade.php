@@ -136,6 +136,30 @@
             border-color: rgb(63, 99, 55);
             background-color: rgb(63, 99, 55) !important;
         }
+
+        /* begin::Separator */
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #a5a8ba;
+        }
+
+        .separator:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .separator:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        /* end::Separator */
     </style>
 </head>
 

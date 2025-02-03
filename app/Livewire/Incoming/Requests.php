@@ -148,7 +148,8 @@ class Requests extends Component
 
     public function loadStatusSelect()
     {
-        return StatusModel::all();
+        return StatusModel::where('status_type', 'incoming request')
+            ->get();
     }
 
     public function createIncomingRequest()

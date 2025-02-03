@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController;
 use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
+use App\Livewire\Outgoing;
 use App\Livewire\Settings\Category;
 use App\Livewire\Settings\SubCategory;
 use App\Livewire\Settings\UserManagement;
@@ -29,6 +30,9 @@ Route::group(['middleware' => 'auth'], function () {
     // Incoming
     Route::get('incoming/requests', Requests::class)->name('incoming.requests');
     Route::get('incoming/documents', Documents::class)->name('incoming.documents');
+
+    // Outgoing
+    Route::get('outgoing/', Outgoing::class)->name('outgoing');
 
     // Settings
     Route::get('/settings/user-management', UserManagement::class)->name('user-management');

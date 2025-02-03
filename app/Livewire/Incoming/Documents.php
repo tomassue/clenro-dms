@@ -92,7 +92,8 @@ class Documents extends Component
 
     public function loadStatusSelect()
     {
-        return StatusModel::all();
+        return StatusModel::where('status_type', 'incoming document')
+            ->get();
     }
 
     public function loadCategorySelect()
