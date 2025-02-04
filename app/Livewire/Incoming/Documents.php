@@ -128,7 +128,7 @@ class Documents extends Component
                 $incoming_document->file_id = json_encode($file_id ?? []);
 
                 $incoming_document->date = $this->date;
-                $incoming_document->status_id = '1'; //* PENDING
+                $incoming_document->status_id = '7'; //* PENDING
                 $incoming_document->remarks = $this->remarks;
                 $incoming_document->save();
             });

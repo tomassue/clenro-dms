@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -23,9 +24,25 @@ class OutgoingModel extends Model
         'file_id'
     ];
 
+    /* -------------------------------------------------------------------------- */
+
+    public function getFormattedDateAttribute()
+    {
+        return Carbon::parse($this->date)->format('M d, Y');
+    }
+
+    /* -------------------------------------------------------------------------- */
+
     public function type()
     {
         return $this->morphTo();
+    }
+
+    /* -------------------------------------------------------------------------- */
+
+    public function status()
+    {
+        return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
     /* -------------------------------------------------------------------------- */

@@ -49,9 +49,9 @@
                             <table class="table table-rounded table-striped border gy-7 gs-7 align-middle">
                                 <thead>
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
+                                        <th>Document No.</th>
                                         <th>Category</th>
                                         <th>Date</th>
-                                        <th>Document No.</th>
                                         <th>Document</th>
                                         <th>Destination</th>
                                         <th>Person Responsible</th>
@@ -62,22 +62,43 @@
                                 <tbody>
                                     @forelse($outgoing as $item)
                                     <tr>
-                                        <td>{{ $item->type_type }}</td>
-                                        <td>{{ $item->date }}</td>
                                         <td>{{ $item->id }}</td>
+                                        <td>
+                                            @php
+                                            switch ($item->type_type) {
+                                            case 'App\Models\OutgoingVoucherModel':
+                                            echo 'Voucher';
+                                            break;
+                                            case 'App\Models\OutgoingRisModel':
+                                            echo 'RIS';
+                                            break;
+                                            case 'App\Models\OutgoingProcurementModel';
+                                            echo 'Procurement';
+                                            break;
+                                            case 'App\Models\OutgoingPayrollModel';
+                                            echo 'Payroll';
+                                            break;
+                                            case 'App\Models\OutgoingOthersModel';
+                                            echo 'Others';
+                                            break;
+                                            default:
+                                            echo '-';
+                                            }
+                                            @endphp
+                                        </td>
+                                        <td>{{ $item->formatted_date }}</td>
                                         <td>{{ $item->details }}</td>
                                         <td>{{ $item->destination }}</td>
+                                        <td>{{ $item->person_responsible }}</td>
                                         <td>
                                             <span class="badge 
-                                            @if($item->status->status_name == 'pending')
+                                            @if($item->status->status_name == 'processing')
                                             badge-light-danger
-                                            @elseif($item->status->status_name == 'processed')
-                                            badge-light-primary
                                             @elseif($item->status->status_name == 'forwarded')
                                             badge-light-warning
                                             @elseif($item->status->status_name == 'completed')
                                             badge-light-success
-                                            @elseif($item->status->status_name == 'cancelled')
+                                            @elseif($item->status->status_name == 'returned')
                                             badge-light-dark
                                             @endif
                                             text-capitalize">
