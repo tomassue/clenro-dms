@@ -84,6 +84,7 @@ class Outgoing extends Component
     {
         $this->reset();
         $this->resetValidation();
+        $this->dispatch('reset-files');
     }
 
     public function render()
@@ -298,6 +299,10 @@ class Outgoing extends Component
                     $outgoing->status_id = '11';
 
                     $outgoing_other->outgoing()->save($outgoing);
+
+                    $this->clear();
+                    $this->dispatch('hide-outgoingModal');
+                    $this->dispatch('success', message: 'Outgoing created successfully.');
                 });
                 break;
             default:
@@ -556,7 +561,26 @@ class Outgoing extends Component
                     $this->outgoing_id->destination = $this->destination;
                     $this->outgoing_id->person_responsible = $this->person_responsible;
 
-                    //TODO: FILE_ID
+                    //* File upload
+                    $file_id = [];
+
+                    foreach ($this->file_id ?? [] as $file) {
+                        $files = new FilesModel();
+                        $files->file_name = $file->getClientOriginalName();
+                        $files->file_size = $file->getSize();
+                        $files->file_type = $file->getMimeType();
+                        $files->file_content = file_get_contents($file->path());
+                        $files->user_id = Auth::user()->id;
+                        $files->save();
+
+                        $file_id[] = $files->id;
+                    }
+
+                    if (!empty($file_id)) {
+                        $existing_file_id = json_decode($this->outgoing_id->file_id, true) ?? [];
+                        $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                        $this->outgoing_id->file_id = json_encode($updated_file_id);
+                    }
 
                     $this->outgoing_id->status_id = $this->status_id;
                     $this->outgoing_id->save();
@@ -565,25 +589,189 @@ class Outgoing extends Component
                     $this->dispatch('hide-outgoingModal');
                     $this->dispatch('success', message: 'Outgoing is updated successfully.');
                 } catch (\Throwable $th) {
-                    throw $th;
+                    // throw $th;
                     $this->dispatch('error');
                 }
                 break;
             case 'ris':
-                dd('ris');
+                try {
+                    $outgoing_ris = OutgoingRisModel::findOrFail($this->outgoing_id->type_id);
+                    $outgoing_ris->document_name = $this->document_name;
+                    $outgoing_ris->ppmp_code = $this->ppmp_code;
+                    $outgoing_ris->save();
+
+                    $this->outgoing_id->date = $this->date;
+                    $this->outgoing_id->details = $this->details;
+                    $this->outgoing_id->destination = $this->destination;
+                    $this->outgoing_id->person_responsible = $this->person_responsible;
+
+                    //* File upload
+                    $file_id = [];
+
+                    foreach ($this->file_id ?? [] as $file) {
+                        $files = new FilesModel();
+                        $files->file_name = $file->getClientOriginalName();
+                        $files->file_size = $file->getSize();
+                        $files->file_type = $file->getMimeType();
+                        $files->file_content = file_get_contents($file->path());
+                        $files->user_id = Auth::user()->id;
+                        $files->save();
+
+                        $file_id[] = $files->id;
+                    }
+
+                    if (!empty($file_id)) {
+                        $existing_file_id = json_decode($this->outgoing_id->file_id, true) ?? [];
+                        $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                        $this->outgoing_id->file_id = json_encode($updated_file_id);
+                    }
+
+                    $this->outgoing_id->status_id = $this->status_id;
+                    $this->outgoing_id->save();
+
+                    $this->clear();
+                    $this->dispatch('hide-outgoingModal');
+                    $this->dispatch('success', message: 'Outgoing is updated successfully.');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $this->dispatch('error');
+                }
                 break;
             case 'procurement':
-                dd('procurement');
+                try {
+                    $outgoing_procurement = OutgoingProcurementModel::findOrFail($this->outgoing_id->type_id);
+                    $outgoing_procurement->pr_no = $this->pr_no;
+                    $outgoing_procurement->po_no = $this->po_no;
+                    $outgoing_procurement->save();
+
+                    $this->outgoing_id->date = $this->date;
+                    $this->outgoing_id->details = $this->details;
+                    $this->outgoing_id->destination = $this->destination;
+                    $this->outgoing_id->person_responsible = $this->person_responsible;
+
+                    //* File upload
+                    $file_id = [];
+
+                    foreach ($this->file_id ?? [] as $file) {
+                        $files = new FilesModel();
+                        $files->file_name = $file->getClientOriginalName();
+                        $files->file_size = $file->getSize();
+                        $files->file_type = $file->getMimeType();
+                        $files->file_content = file_get_contents($file->path());
+                        $files->user_id = Auth::user()->id;
+                        $files->save();
+
+                        $file_id[] = $files->id;
+                    }
+
+                    if (!empty($file_id)) {
+                        $existing_file_id = json_decode($this->outgoing_id->file_id, true) ?? [];
+                        $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                        $this->outgoing_id->file_id = json_encode($updated_file_id);
+                    }
+
+                    $this->outgoing_id->status_id = $this->status_id;
+                    $this->outgoing_id->save();
+
+                    $this->clear();
+                    $this->dispatch('hide-outgoingModal');
+                    $this->dispatch('success', message: 'Outgoing is updated successfully.');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $this->dispatch('error');
+                }
                 break;
             case 'payroll':
-                dd('payroll');
+                try {
+                    $outgoing_payroll = OutgoingPayrollModel::findOrFail($this->outgoing_id->type_id);
+                    $outgoing_payroll->payroll_type = $this->payroll_type;
+                    $outgoing_payroll->save();
+
+                    $this->outgoing_id->date = $this->date;
+                    $this->outgoing_id->details = $this->details;
+                    $this->outgoing_id->destination = $this->destination;
+                    $this->outgoing_id->person_responsible = $this->person_responsible;
+
+                    //* File upload
+                    $file_id = [];
+
+                    foreach ($this->file_id ?? [] as $file) {
+                        $files = new FilesModel();
+                        $files->file_name = $file->getClientOriginalName();
+                        $files->file_size = $file->getSize();
+                        $files->file_type = $file->getMimeType();
+                        $files->file_content = file_get_contents($file->path());
+                        $files->user_id = Auth::user()->id;
+                        $files->save();
+
+                        $file_id[] = $files->id;
+                    }
+
+                    if (!empty($file_id)) {
+                        $existing_file_id = json_decode($this->outgoing_id->file_id, true) ?? [];
+                        $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                        $this->outgoing_id->file_id = json_encode($updated_file_id);
+                    }
+
+                    $this->outgoing_id->status_id = $this->status_id;
+                    $this->outgoing_id->save();
+
+                    $this->clear();
+                    $this->dispatch('hide-outgoingModal');
+                    $this->dispatch('success', message: 'Outgoing is updated successfully.');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $this->dispatch('error');
+                }
                 break;
             case 'other':
-                dd('other');
+                try {
+                    $outgoing_other = OutgoingOthersModel::findOrFail($this->outgoing_id->type_id);
+                    $outgoing_other->document_name = $this->document_name;
+                    $outgoing_other->save();
+
+                    $this->outgoing_id->date = $this->date;
+                    $this->outgoing_id->details = $this->details;
+                    $this->outgoing_id->destination = $this->destination;
+                    $this->outgoing_id->person_responsible = $this->person_responsible;
+
+                    //* File upload
+                    $file_id = [];
+
+                    foreach ($this->file_id ?? [] as $file) {
+                        $files = new FilesModel();
+                        $files->file_name = $file->getClientOriginalName();
+                        $files->file_size = $file->getSize();
+                        $files->file_type = $file->getMimeType();
+                        $files->file_content = file_get_contents($file->path());
+                        $files->user_id = Auth::user()->id;
+                        $files->save();
+
+                        $file_id[] = $files->id;
+                    }
+
+                    if (!empty($file_id)) {
+                        $existing_file_id = json_decode($this->outgoing_id->file_id, true) ?? [];
+                        $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
+                        $this->outgoing_id->file_id = json_encode($updated_file_id);
+                    }
+
+                    $this->outgoing_id->status_id = $this->status_id;
+                    $this->outgoing_id->save();
+
+                    $this->clear();
+                    $this->dispatch('hide-outgoingModal');
+                    $this->dispatch('success', message: 'Outgoing is updated successfully.');
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    $this->dispatch('error');
+                }
                 break;
             default:
                 // throw new \InvalidArgumentException("Invalid type: {$this->type}");
                 $this->dispatch('error');
         }
     }
+
+    //TODO: Retrieve history with the morphed table.
 }
