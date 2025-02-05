@@ -26,8 +26,8 @@
                     <!--end: CHANGE STATUS -->
 
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Type</label>
-                        <select class="form-select" aria-label="Select example" wire:model.live="type">
+                        <label class="{{ $editMode ? '' : 'required' }} fw-bold fs-6 mb-2">Type</label>
+                        <select class="form-select" aria-label="Select example" wire:model.live="type" {{ $editMode ? 'disabled' : '' }}>
                             <option value="">Open this select menu</option>
                             <option value="voucher">Voucher</option>
                             <option value="ris">RIS</option>
@@ -158,6 +158,31 @@
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>
                         @enderror
+                    </div>
+
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }}">
+                        <table class="table table-row-dashed table-row-gray-300 gy-7">
+                            <thead>
+                                <tr class="fw-bolder fs-6 text-gray-800">
+                                    <th width="80%">File</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($preview_file_id as $item)
+                                <tr>
+                                    <td>{{ $item->file_name }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-info" wire:click="readFile({{ $item->id }})">View</a>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="2" class="text-center">No files.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
 
             </div>

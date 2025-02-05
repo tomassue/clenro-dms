@@ -106,7 +106,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readIncomingRequest({{ $item->id }})">Edit</a>
+                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readOutgoing({{ $item->id }})">Edit</a>
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="readDocumentHistory({{ $item->id }})">History</a>
                                         </td>
                                     </tr>
