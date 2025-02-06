@@ -22,7 +22,7 @@
                                 <td>{{ $item['updated_at'] }}</td>
                                 <td>
                                     <span class="badge 
-                                            @if($item['status'] == 'pending')
+                                            @if($item['status'] == 'pending' || $item['status'] == 'processing')
                                             badge-light-danger
                                             @elseif($item['status'] == 'processed')
                                             badge-light-primary

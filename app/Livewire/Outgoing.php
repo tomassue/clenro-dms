@@ -10,6 +10,7 @@ use App\Models\OutgoingProcurementModel;
 use App\Models\OutgoingRisModel;
 use App\Models\OutgoingVoucherModel;
 use App\Models\StatusModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -17,6 +18,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Activitylog\Models\Activity;
 
 #[Title('Outgoing')]
 class Outgoing extends Component
@@ -25,7 +27,8 @@ class Outgoing extends Component
 
     public $editMode,
         $type,
-        $preview_file_id = [];
+        $preview_file_id = [],
+        $document_history = [];
     public $search,
         $filter_status;
     public $outgoing_id;
@@ -773,5 +776,34 @@ class Outgoing extends Component
         }
     }
 
-    //TODO: Retrieve history with the morphed table.
+    //* Retrieve history with the morphed table. For now, we only retrieves status coming from the outgoing record.
+    public function readOutgoingHistory($outgoing_id)
+    {
+        try {
+            // Fetch all statuses in a key-value pair: [status_id => status_name]
+            $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+
+            $this->document_history = Activity::where('subject_type', OutgoingModel::class)
+                ->where('subject_id', $outgoing_id)
+                ->where('log_name', 'outgoing')
+                ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($item) use ($statusMap) {
+                    $oldStatusId = $item->properties['old']['status_id'] ?? null;
+                    $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+
+                    return [
+                        // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+                        'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
+                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'updated_by' => $item->causer ? $item->causer->name : 'System'
+                    ];
+                });
+
+            $this->dispatch('show-documentHistoryModal');
+        } catch (\Throwable $th) {
+            $this->dispatch('error');
+        }
+    }
 }
