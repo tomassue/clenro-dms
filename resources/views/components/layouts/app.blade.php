@@ -39,6 +39,7 @@
 
     <link href="{{ asset('plugins/jquery-filepond-master/filepond.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('plugins/jquery-filepond-master/filepond-plugin-image-preview.css') }}">
+    <link href="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
     <!-- end::Plugins -->
 
     <style>
@@ -204,6 +205,8 @@
     <script src="{{ asset('plugins/jquery-filepond-master/filepond-plugin-file-validate-size.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond-plugin-image-preview.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond.jquery.js') }}"></script>
+
+    <script src="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
     <!-- end::Plugins -->
 </body>
 

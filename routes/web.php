@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FileController;
+use App\Livewire\Calendar;
 use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
@@ -33,6 +34,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Outgoing
     Route::get('outgoing/', Outgoing::class)->name('outgoing');
+
+    // Calendar
+    Route::get('calendar/', Calendar::class)->name('calendar');
 
     // Settings
     Route::get('/settings/user-management', UserManagement::class)->name('user-management');
