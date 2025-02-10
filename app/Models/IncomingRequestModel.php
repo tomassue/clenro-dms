@@ -84,6 +84,11 @@ class IncomingRequestModel extends Model
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
+    public function venue()
+    {
+        return $this->belongsTo(VenueModel::class, 'venue_id', 'id');
+    }
+
     /**
      * Accessor for formatted date_requested.
      *
