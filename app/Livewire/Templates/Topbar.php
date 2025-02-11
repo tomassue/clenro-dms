@@ -110,7 +110,7 @@ class Topbar extends Component
                                             <!--end::Menu separator-->
                                             <!--begin::Menu item-->
                                             <div class="menu-item px-5">
-                                                <a href="../../demo4/dist/authentication/flows/basic/sign-in.html" class="menu-link px-5">Account Settings</a>
+                                                <a href="{{ route('change-password') }}" class="menu-link px-5">Account Settings</a>
                                             </div>
                                             <!--end::Menu item-->
                                             <!--begin::Menu item-->

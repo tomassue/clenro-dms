@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FileController;
+use App\Livewire\AccountSettings\ChangePassword;
 use App\Livewire\Calendar;
 use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Documents;
@@ -18,9 +19,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Auth::routes(['register' => false]); //! NOT WORKING
+Auth::routes(['register' => false]); //! NOT WORKING - it should be disabled.
 
-Route::group(['middleware' => 'auth'], function () {
+Route::middleware(['auth', 'default-password'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     // Controller
@@ -43,4 +44,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/settings/category', Category::class)->name('category');
     Route::get('/settings/sub-category', SubCategory::class)->name('sub-category');
     Route::get('/settings/venue', Venue::class)->name('venue');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // AccountSettings
+    Route::get('/account-settings/change-password', ChangePassword::class)->name('change-password');
 });
