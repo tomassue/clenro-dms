@@ -50,3 +50,12 @@ Route::middleware(['auth'])->group(function () {
     // AccountSettings
     Route::get('/account-settings/change-password', ChangePassword::class)->name('change-password');
 });
+
+/* -------------------------------------------------------------------------- */
+
+Livewire::setScriptRoute(function ($handle) {
+    return Route::get('/clenro-dts/livewire/livewire.js', $handle);
+});
+Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/clenro-dts/livewire/update', $handle);
+});
