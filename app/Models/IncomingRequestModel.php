@@ -18,12 +18,14 @@ class IncomingRequestModel extends Model
         'incoming_request_no',
         'office_or_barangay_or_organization_name',
         'date_requested',
-        'date_returned',
-        'actual_returned_date',
+        // 'date_returned',
+        // 'actual_returned_date',
         'category_id',
-        'venue_id',
-        'time_started',
-        'time_ended',
+        'sub_category_id',
+        // 'venue_id',
+        // 'time_started',
+        // 'time_ended',
+        'date_and_time',
         'contact_person_name',
         'contact_person_number',
         'description',
@@ -84,10 +86,10 @@ class IncomingRequestModel extends Model
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
-    public function venue()
-    {
-        return $this->belongsTo(VenueModel::class, 'venue_id', 'id');
-    }
+    // public function venue()
+    // {
+    //     return $this->belongsTo(VenueModel::class, 'venue_id', 'id');
+    // }
 
     /**
      * Accessor for formatted date_requested.
@@ -99,27 +101,27 @@ class IncomingRequestModel extends Model
         return Carbon::parse($this->date_requested)->format('M d, Y'); // e.g., Jan 01, 2024
     }
 
-    /**
-     * Accessor for formatted date_returned.
-     *
-     * @return string
-     */
-    public function getFormattedDateReturnedAttribute()
-    {
-        return $this->date_returned
-            ? Carbon::parse($this->date_returned)->format('M d, Y')
-            : null; // Handle null values
-    }
+    // /**
+    //  * Accessor for formatted date_returned.
+    //  *
+    //  * @return string
+    //  */
+    // public function getFormattedDateReturnedAttribute()
+    // {
+    //     return $this->date_returned
+    //         ? Carbon::parse($this->date_returned)->format('M d, Y')
+    //         : null; // Handle null values
+    // }
 
-    /**
-     * Accessor for formatted actual_returned_date.
-     *
-     * @return string
-     */
-    public function getFormattedActualReturnedDateAttribute()
-    {
-        return $this->actual_returned_date
-            ? Carbon::parse($this->actual_returned_date)->format('M d, Y')
-            : null;
-    }
+    // /**
+    //  * Accessor for formatted actual_returned_date.
+    //  *
+    //  * @return string
+    //  */
+    // public function getFormattedActualReturnedDateAttribute()
+    // {
+    //     return $this->actual_returned_date
+    //         ? Carbon::parse($this->actual_returned_date)->format('M d, Y')
+    //         : null;
+    // }
 }

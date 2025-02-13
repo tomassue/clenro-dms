@@ -51,7 +51,6 @@
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                                         <th>No.</th>
                                         <th>Date Requested</th>
-                                        <th>Date Returned</th>
                                         <th>Office/Brgy/Org</th>
                                         <th>Category</th>
                                         <th>Sub-category</th>
@@ -64,7 +63,6 @@
                                     <tr>
                                         <td>{{ $item->incoming_request_no }}</td>
                                         <td>{{ $item->formatted_date_requested }}</td>
-                                        <td>{{ $item->formatted_date_returned }}</td>
                                         <td>{{ $item->office_or_barangay_or_organization_name }}</td>
                                         <td>{{ $item->category->category_name }}</td>
                                         <td>{{ $item->sub_category->sub_category_name ?? '-' }}</td>

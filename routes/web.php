@@ -17,9 +17,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Auth::routes();
-
-Auth::routes(['register' => false]); //! NOT WORKING - it should be disabled.
+Auth::routes(['register' => false]);
 
 Route::middleware(['auth', 'default-password'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

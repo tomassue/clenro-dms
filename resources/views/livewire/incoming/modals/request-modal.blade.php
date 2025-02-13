@@ -56,16 +56,6 @@
                     </div>
 
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Return Date</label>
-                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_returned" />
-                        @error('date_returned')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
                             <option value="">Open this select menu</option>
@@ -96,41 +86,6 @@
                     </div>
 
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Venue</label>
-                        <select class="form-select" aria-label="Select example" wire:model="venue_id">
-                            <option value="">Open this select menu</option>
-                            @foreach($venue_select as $item)
-                            <option value="{{ $item->id }}">{{ $item->venue_name }}</option>
-                            @endforeach
-                        </select>
-                        @error('venue_id')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Time Started</label>
-                        <input type="time" class="form-control mb-3 mb-lg-0" wire:model="time_started" />
-                        @error('time_started')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Time Ended</label>
-                        <input type="time" class="form-control mb-3 mb-lg-0" wire:model="time_ended" />
-                        @error('time_ended')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Person (Name)</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_name" />
                         @error('contact_person_name')
@@ -141,7 +96,7 @@
                     </div>
 
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Contact Person (No.)</label>
+                        <label class="required fw-bold fs-6 mb-2">Contact Number</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_number" />
                         @error('contact_person_number')
                         <div class="fv-plugins-message-container invalid-feedback">

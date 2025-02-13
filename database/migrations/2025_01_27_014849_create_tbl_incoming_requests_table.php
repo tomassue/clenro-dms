@@ -16,13 +16,14 @@ return new class extends Migration
             $table->string('incoming_request_no')->unique();
             $table->string('office_or_barangay_or_organization_name');
             $table->date('date_requested');
-            $table->date('date_returned');
-            $table->date('actual_returned_date')->nullable();
+            // $table->date('date_returned');
+            // $table->date('actual_returned_date')->nullable();
             $table->string('category_id'); // Foreign Key
             $table->string('sub_category_id')->nullable(); // Foreign Key
-            $table->string('venue_id'); // Foreign Key
-            $table->time('time_started');
-            $table->time('time_ended');
+            // $table->string('venue_id'); // Foreign Key
+            // $table->time('time_started');
+            // $table->time('time_ended');
+            $table->string('date_and_time');
             $table->string('contact_person_name');
             $table->string('contact_person_number');
             $table->text('description');
