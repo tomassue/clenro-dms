@@ -41,7 +41,6 @@ Route::middleware(['auth', 'default-password'])->group(function () {
     Route::get('/settings/user-management', UserManagement::class)->name('user-management');
     Route::get('/settings/category', Category::class)->name('category');
     Route::get('/settings/sub-category', SubCategory::class)->name('sub-category');
-    Route::get('/settings/venue', Venue::class)->name('venue');
 });
 
 Route::middleware(['auth'])->group(function () {

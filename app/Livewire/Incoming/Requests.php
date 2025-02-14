@@ -30,13 +30,14 @@ class Requests extends Component
     public $incoming_request_no,
         $office_or_barangay_or_organization_name,
         $date_requested,
-        $date_returned,
-        $actual_returned_date,
+        // $date_returned,
+        // $actual_returned_date,
         $category_id,
         $sub_category_id,
-        $venue_id,
-        $time_started,
-        $time_ended,
+        // $venue_id,
+        // $time_started,
+        // $time_ended,
+        $date_and_time,
         $contact_person_name,
         $contact_person_number,
         $description,
@@ -50,13 +51,14 @@ class Requests extends Component
         $rules = [
             'incoming_request_no' => 'required',
             'office_or_barangay_or_organization_name' => 'required',
-            'date_requested' => 'required',
-            'date_returned' => 'required',
+            // 'date_requested' => 'required',
+            // 'date_returned' => 'required',
             // 'actual_returned_date' => 'required', //* ONLY required upon updating the status to DONE
             'category_id' => 'required',
-            'venue_id' => 'required',
-            'time_started' => 'required',
-            'time_ended' => 'required',
+            // 'venue_id' => 'required',
+            // 'time_started' => 'required',
+            // 'time_ended' => 'required',
+            'date_and_time' => 'required',
             'contact_person_name' => 'required',
             'contact_person_number' => 'required',
             'description' => 'required'
@@ -78,8 +80,8 @@ class Requests extends Component
         return [
             'category_id' => 'category',
             'sub_category_id' => 'sub-category',
-            'venue_id' => 'venue',
-            'date_returned' => 'return date',
+            // 'venue_id' => 'venue',
+            // 'date_returned' => 'return date',
             'status_id' => 'status'
         ];
     }

@@ -95,7 +95,7 @@ class Sidebar extends Component
                             </a>
                         </div>
                         <div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
-                            <span class="menu-link menu-center" title="Settings" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+                            <span class="menu-link menu-center" title="References" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
                                     <!--begin::Svg Icon | path: assets/media/icons/duotune/coding/cod001.svg-->
                                     <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -108,7 +108,7 @@ class Sidebar extends Component
                             <div class="menu-sub menu-sub-dropdown w-225px px-1 py-4">
                                 <div class="menu-item">
                                     <div class="menu-content">
-                                        <span class="menu-section fs-5 fw-bolder ps-1 py-1">Settings</span>
+                                        <span class="menu-section fs-5 fw-bolder ps-1 py-1">References</span>
                                     </div>
                                 </div>
                                 <div class="menu-item">
@@ -124,7 +124,23 @@ class Sidebar extends Component
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Category (Ref)</span>
+                                        <span class="menu-title">Incoming Request (Category)</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'category' ? 'active' : '' }}" href="#">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Incoming Document (Category)</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'category' ? 'active' : '' }}" href="#">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Outgoing (Category)</span>
                                     </a>
                                 </div>
                                 <div class="menu-item">
@@ -133,14 +149,6 @@ class Sidebar extends Component
                                             <span class="bullet bullet-dot"></span>
                                         </span>
                                         <span class="menu-title">Sub-category (Ref)</span>
-                                    </a>
-                                </div>
-                                <div class="menu-item">
-                                    <a class="menu-link {{ Route::currentRouteName() == 'venue' ? 'active' : '' }}" href="{{ route('venue') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Venue (Ref)</span>
                                     </a>
                                 </div>
                             </div>

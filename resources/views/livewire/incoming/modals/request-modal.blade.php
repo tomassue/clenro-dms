@@ -86,6 +86,16 @@
                     </div>
 
                     <div class="col-12 mb-10">
+                        <label class="required fw-bold fs-6 mb-2">Date and Time</label>
+                        <input type="datetime-local" class="form-control mb-3 mb-lg-0" wire:model="date_and_time" />
+                        @error('date_and_time')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Person (Name)</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_name" />
                         @error('contact_person_name')
