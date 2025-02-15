@@ -8,6 +8,7 @@ use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
 use App\Livewire\Outgoing;
 use App\Livewire\Settings\Category;
+use App\Livewire\Settings\IncomingRequestCategory;
 use App\Livewire\Settings\SubCategory;
 use App\Livewire\Settings\UserManagement;
 use App\Livewire\Settings\Venue;
@@ -37,10 +38,11 @@ Route::middleware(['auth', 'default-password'])->group(function () {
     // Calendar
     Route::get('calendar/', Calendar::class)->name('calendar');
 
-    // Settings
-    Route::get('/settings/user-management', UserManagement::class)->name('user-management');
-    Route::get('/settings/category', Category::class)->name('category');
-    Route::get('/settings/sub-category', SubCategory::class)->name('sub-category');
+    // Reference
+    Route::get('/reference/user-management', UserManagement::class)->name('user-management');
+    Route::get('/reference/category', Category::class)->name('category');
+    Route::get('/reference/incoming-request-category', IncomingRequestCategory::class)->name('incoming-request-category');
+    Route::get('/reference/sub-category', SubCategory::class)->name('sub-category');
 });
 
 Route::middleware(['auth'])->group(function () {
