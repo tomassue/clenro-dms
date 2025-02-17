@@ -128,7 +128,7 @@ class Sidebar extends Component
                                     </a>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link {{ Route::currentRouteName() == 'category' ? 'active' : '' }}" href="#">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'incoming-document-category' ? 'active' : '' }}" href="{{ route('incoming-document-category') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
@@ -136,21 +136,14 @@ class Sidebar extends Component
                                     </a>
                                 </div>
                                 <div class="menu-item">
-                                    <a class="menu-link {{ Route::currentRouteName() == 'category' ? 'active' : '' }}" href="#">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'outgoing-category' ? 'active' : '' }}" href="{{ route('outgoing-category') }}">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
                                         <span class="menu-title">Outgoing (Category)</span>
                                     </a>
                                 </div>
-                                <div class="menu-item">
-                                    <a class="menu-link {{ Route::currentRouteName() == 'sub-category' ? 'active' : '' }}" href="{{ route('sub-category') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Sub-category (Ref)</span>
-                                    </a>
-                                </div>
+                                // SUB-CATEGORY HERE (HIDDEN)
                             </div>
                         </div>
                     </div>
