@@ -60,25 +60,10 @@
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
                             <option value="">Open this select menu</option>
                             @foreach($category_select as $item)
-                            <option value="{{ $item->id }}">{{ $item->category_name }}</option>
+                            <option value="{{ $item->id }}">{{ $item->incoming_request_category_name }}</option>
                             @endforeach
                         </select>
                         @error('category_id')
-                        <div class="fv-plugins-message-container invalid-feedback">
-                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
-                        </div>
-                        @enderror
-                    </div>
-
-                    <div class="col-12 mb-10" style="display: {{ $sub_category_select->count() != 0 ? '' : 'none'}}">
-                        <label class="required fw-bold fs-6 mb-2">Sub-category</label>
-                        <select class="form-select" aria-label="Select example" wire:model.live="sub_category_id">
-                            <option value="">Open this select menu</option>
-                            @foreach($sub_category_select as $item)
-                            <option value="{{ $item->id }}" {{ $item->id == $sub_category_id ? 'selected' : '' }}>{{ $item->sub_category_name }}</option>
-                            @endforeach
-                        </select>
-                        @error('sub_category_id')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>

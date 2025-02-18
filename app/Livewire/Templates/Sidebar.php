@@ -143,7 +143,6 @@ class Sidebar extends Component
                                         <span class="menu-title">Outgoing (Category)</span>
                                     </a>
                                 </div>
-                                // SUB-CATEGORY HERE (HIDDEN)
                             </div>
                         </div>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Livewire\Incoming;
 
 use App\Models\CategoryModel;
 use App\Models\FilesModel;
+use App\Models\IncomingRequestCategoryModel;
 use App\Models\IncomingRequestModel;
 use App\Models\StatusModel;
 use App\Models\SubCategoryModel;
@@ -33,7 +34,7 @@ class Requests extends Component
         // $date_returned,
         // $actual_returned_date,
         $category_id,
-        $sub_category_id,
+        // $sub_category_id,
         // $venue_id,
         // $time_started,
         // $time_ended,
@@ -64,10 +65,6 @@ class Requests extends Component
             'description' => 'required'
         ];
 
-        if ($this->category_id && $this->loadSubCategorySelect()->count() != 0) {
-            $rules['sub_category_id'] = 'required';
-        }
-
         if ($this->editMode) {
             $rules['status_id'] = 'required';
         }
@@ -79,7 +76,7 @@ class Requests extends Component
     {
         return [
             'category_id' => 'category',
-            'sub_category_id' => 'sub-category',
+            // 'sub_category_id' => 'sub-category',
             // 'venue_id' => 'venue',
             // 'date_returned' => 'return date',
             'status_id' => 'status'
@@ -112,8 +109,6 @@ class Requests extends Component
             [
                 'incoming_requests' => $this->loadIncomingRequests(),
                 'category_select' => $this->loadCategorySelect(),
-                'sub_category_select' => $this->loadSubCategorySelect(),
-                'venue_select' => $this->loadVenueSelect(),
                 'status_select' => $this->loadStatusSelect()
             ]
         );
@@ -130,22 +125,7 @@ class Requests extends Component
 
     public function loadCategorySelect()
     {
-        return CategoryModel::where('category_type_id', 1)
-            ->get();
-    }
-
-    public function loadSubCategorySelect()
-    {
-        return SubCategoryModel::when($this->category_id, function ($query) {
-            $query->where('category_id', $this->category_id);
-        }, function ($query) {
-            $query->whereNull('id'); // No results
-        })->get();
-    }
-
-    public function loadVenueSelect()
-    {
-        return VenueModel::all();
+        return IncomingRequestCategoryModel::all();
     }
 
     public function loadStatusSelect()
@@ -164,12 +144,13 @@ class Requests extends Component
                 $incoming_request->incoming_request_no = $this->incoming_request_no;
                 $incoming_request->office_or_barangay_or_organization_name = $this->office_or_barangay_or_organization_name;
                 $incoming_request->date_requested = $this->date_requested;
-                $incoming_request->date_returned = $this->date_returned;
+                // $incoming_request->date_returned = $this->date_returned;
                 $incoming_request->category_id = $this->category_id;
-                $incoming_request->sub_category_id = $this->sub_category_id;
-                $incoming_request->venue_id = $this->venue_id;
-                $incoming_request->time_started = $this->time_started;
-                $incoming_request->time_ended = $this->time_ended;
+                // $incoming_request->sub_category_id = $this->sub_category_id;
+                // $incoming_request->venue_id = $this->venue_id;
+                // $incoming_request->time_started = $this->time_started;
+                // $incoming_request->time_ended = $this->time_ended;
+                $incoming_request->date_and_time = $this->date_and_time;
                 $incoming_request->contact_person_name = $this->contact_person_name;
                 $incoming_request->contact_person_number = $this->contact_person_number;
                 $incoming_request->description = $this->description;
@@ -215,12 +196,13 @@ class Requests extends Component
                     'incoming_request_no',
                     'office_or_barangay_or_organization_name',
                     'date_requested',
-                    'date_returned',
+                    // 'date_returned',
                     'category_id',
-                    'sub_category_id',
-                    'venue_id',
-                    'time_started',
-                    'time_ended',
+                    // 'sub_category_id',
+                    // 'venue_id',
+                    // 'time_started',
+                    // 'time_ended',
+                    'date_and_time',
                     'contact_person_name',
                     'contact_person_number',
                     'description',
@@ -271,12 +253,13 @@ class Requests extends Component
                 $incoming_request->incoming_request_no = $this->incoming_request_no;
                 $incoming_request->office_or_barangay_or_organization_name = $this->office_or_barangay_or_organization_name;
                 $incoming_request->date_requested = $this->date_requested;
-                $incoming_request->date_returned = $this->date_returned;
+                // $incoming_request->date_returned = $this->date_returned;
                 $incoming_request->category_id = $this->category_id;
-                $incoming_request->sub_category_id = $this->sub_category_id;
-                $incoming_request->venue_id = $this->venue_id;
-                $incoming_request->time_started = $this->time_started;
-                $incoming_request->time_ended = $this->time_ended;
+                // $incoming_request->sub_category_id = $this->sub_category_id;
+                // $incoming_request->venue_id = $this->venue_id;
+                // $incoming_request->time_started = $this->time_started;
+                // $incoming_request->time_ended = $this->time_ended;
+                $incoming_request->date_and_time = $this->date_and_time;
                 $incoming_request->contact_person_name = $this->contact_person_name;
                 $incoming_request->contact_person_number = $this->contact_person_number;
                 $incoming_request->description = $this->description;

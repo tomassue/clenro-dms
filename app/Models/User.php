@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'username',
+        'division_id',
         'email',
         'password',
     ];
@@ -46,5 +47,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(DivisionModel::class, 'division_id', 'id');
     }
 }

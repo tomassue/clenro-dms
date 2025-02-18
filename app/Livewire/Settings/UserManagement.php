@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Settings;
 
+use App\Models\DivisionModel;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class UserManagement extends Component
 
     public $editMode = false;
     public $search;
-    public $name, $username, $email;
+    public $name, $username, $division_id, $email;
     public $user_id;
 
     public function rules()
@@ -25,7 +26,15 @@ class UserManagement extends Component
         return [
             'name' => 'required|string',
             'username' => ['required', Rule::unique('users', 'username')->ignore($this->user_id)],
+            'division_id' => 'required',
             'email' => ['required', 'email:rfc,dns', Rule::unique('users', 'email')->ignore($this->user_id)]
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'division_id' => 'division'
         ];
     }
 
@@ -43,13 +52,15 @@ class UserManagement extends Component
     public function render()
     {
         return view('livewire.settings.user-management', [
-            'users' => $this->loadUsersTable()
+            'users' => $this->loadUsersTable(),
+            'division_select' => $this->loadDivisionSelect()
         ]);
     }
 
     public function loadUsersTable()
     {
         return User::withTrashed()
+            ->with('division')
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', "%{$this->search}%")
                     ->orWhere('username', 'like', "%{$this->search}%")
@@ -58,15 +69,21 @@ class UserManagement extends Component
             ->paginate(10);
     }
 
+    public function loadDivisionSelect()
+    {
+        return DivisionModel::all();
+    }
+
     public function createUser()
     {
-        $this->validate();
+        $this->validate($this->rules(), [], $this->attributes());
 
         try {
             DB::transaction(function () {
                 $user = new User();
                 $user->name = $this->name;
                 $user->username = $this->username;
+                $user->division_id = $this->division_id;
                 $user->email = $this->email;
                 $user->password = Hash::make('password');
                 $user->save();
@@ -90,7 +107,7 @@ class UserManagement extends Component
 
             $user = User::withTrashed()->findOrFail($user_id);
             $this->fill(
-                $user->only('name', 'username', 'email')
+                $user->only('name', 'username', 'division_id', 'email')
             );
 
             $this->dispatch('show-userModal');
@@ -102,7 +119,7 @@ class UserManagement extends Component
 
     public function updateUser()
     {
-        $this->validate();
+        $this->validate($this->rules(), [], $this->attributes());
 
         try {
             $user = User::findOrFail($this->user_id->id);
@@ -110,6 +127,7 @@ class UserManagement extends Component
             DB::transaction(function () use ($user) {
                 $user->name = $this->name;
                 $user->username = $this->username;
+                $user->division_id = $this->division_id;
                 $user->email = $this->email;
                 $user->save();
             });

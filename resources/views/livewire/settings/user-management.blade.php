@@ -32,6 +32,7 @@
                                 <thead>
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                                         <th>Name</th>
+                                        <th>Division</th>
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>Status</th>
@@ -42,6 +43,7 @@
                                     @forelse($users as $index=>$item)
                                     <tr>
                                         <td>{{ $item->name }}</td>
+                                        <td>{{ $item->division->division_name ?? '-' }}</td>
                                         <td>{{ $item->username }}</td>
                                         <td>{{ $item->email }}</td>
                                         <td>

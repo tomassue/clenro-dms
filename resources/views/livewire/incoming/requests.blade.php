@@ -53,7 +53,6 @@
                                         <th>Date Requested</th>
                                         <th>Office/Brgy/Org</th>
                                         <th>Category</th>
-                                        <th>Sub-category</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -64,8 +63,7 @@
                                         <td>{{ $item->incoming_request_no }}</td>
                                         <td>{{ $item->formatted_date_requested }}</td>
                                         <td>{{ $item->office_or_barangay_or_organization_name }}</td>
-                                        <td>{{ $item->category->category_name }}</td>
-                                        <td>{{ $item->sub_category->sub_category_name ?? '-' }}</td>
+                                        <td>{{ $item->category->incoming_request_category_name }}</td>
                                         <td>
                                             <span class="badge 
                                             @if($item->status->status_name == 'pending')
@@ -86,6 +84,51 @@
                                         <td>
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readIncomingRequest({{ $item->id }})">Edit</a>
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="readDocumentHistory({{ $item->id }})">History</a>
+
+                                            <!--begin::Trigger-->
+                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-primary mb-2"
+                                                data-kt-menu-trigger="click"
+                                                data-kt-menu-placement="bottom-start">
+                                                Actions
+                                            </button>
+                                            <!--end::Trigger-->
+
+                                            <!--begin::Menu-->
+                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
+                                                data-kt-menu="true">
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3">
+                                                        Menu item 1
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3">
+                                                        Menu item 2
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3">
+                                                        Menu item 3
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3">
+                                                        Menu item 4
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                            </div>
+                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty

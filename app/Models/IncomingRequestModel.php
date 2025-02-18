@@ -73,13 +73,13 @@ class IncomingRequestModel extends Model
 
     public function category()
     {
-        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+        return $this->belongsTo(IncomingRequestCategoryModel::class, 'category_id', 'id');
     }
 
-    public function sub_category()
-    {
-        return $this->belongsTo(SubCategoryModel::class, 'sub_category_id', 'id');
-    }
+    // public function sub_category()
+    // {
+    //     return $this->belongsTo(SubCategoryModel::class, 'sub_category_id', 'id');
+    // }
 
     public function status()
     {
