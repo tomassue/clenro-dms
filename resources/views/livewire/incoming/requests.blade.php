@@ -82,14 +82,11 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readIncomingRequest({{ $item->id }})">Edit</a>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="readDocumentHistory({{ $item->id }})">History</a>
-
                                             <!--begin::Trigger-->
-                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-primary mb-2"
+                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
                                                 data-kt-menu-trigger="click"
                                                 data-kt-menu-placement="bottom-start">
-                                                Actions
+                                                <i class="bi bi-three-dots"></i>
                                             </button>
                                             <!--end::Trigger-->
 
@@ -98,32 +95,24 @@
                                                 data-kt-menu="true">
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3">
-                                                        Menu item 1
+                                                    <a href="#" class="menu-link px-3" wire:click="readIncomingRequest({{ $item->id }})">
+                                                        Edit
                                                     </a>
                                                 </div>
                                                 <!--end::Menu item-->
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3">
-                                                        Menu item 2
+                                                    <a href="#" class="menu-link px-3" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
+                                                        Forward
                                                     </a>
                                                 </div>
                                                 <!--end::Menu item-->
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3">
-                                                        Menu item 3
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3">
-                                                        Menu item 4
+                                                    <a href="#" class="menu-link px-3" wire:click="readDocumentHistory({{ $item->id }})">
+                                                        History
                                                     </a>
                                                 </div>
                                                 <!--end::Menu item-->
@@ -154,8 +143,8 @@
     <!--end::Row-->
 
     @include('livewire.incoming.modals.request-modal')
-
     @include('livewire.modals.document-history-modal')
+    @include('livewire.incoming.modals.forward-to-division-modal')
 </div>
 
 @script
@@ -176,6 +165,15 @@
     $wire.on('show-documentHistoryModal', () => {
         $('#documentHistoryModal').modal('show');
     });
+
+    $wire.on('show-forwardToDivisionModal', (id) => {
+        $('#forwardToDivisionModal').modal('show');
+        $wire.incoming_request_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
+    });
+
+    $wire.on('hide-forwardToDivisionModal', () => {
+        $('#forwardToDivisionModal').modal('hide');
+    })
 
     /* -------------------------------------------------------------------------- */
 

@@ -161,6 +161,17 @@
         }
 
         /* end::Separator */
+
+        /* begin::disable anchor */
+        .disabled-link {
+            pointer-events: none;
+            cursor: default;
+            /* Optional: Change cursor to indicate it's disabled */
+            opacity: 0.6;
+            /* Optional: Make it look disabled */
+        }
+
+        /* end::disable anchor */
     </style>
 </head>
 

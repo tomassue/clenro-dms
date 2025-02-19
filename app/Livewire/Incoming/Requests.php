@@ -3,6 +3,7 @@
 namespace App\Livewire\Incoming;
 
 use App\Models\CategoryModel;
+use App\Models\DivisionModel;
 use App\Models\FilesModel;
 use App\Models\IncomingRequestCategoryModel;
 use App\Models\IncomingRequestModel;
@@ -31,19 +32,14 @@ class Requests extends Component
     public $incoming_request_no,
         $office_or_barangay_or_organization_name,
         $date_requested,
-        // $date_returned,
-        // $actual_returned_date,
         $category_id,
-        // $sub_category_id,
-        // $venue_id,
-        // $time_started,
-        // $time_ended,
         $date_and_time,
         $contact_person_name,
         $contact_person_number,
         $description,
         $file_id = [],
         $status_id;
+    public $division_id; //* Forwarded to division id
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -52,13 +48,7 @@ class Requests extends Component
         $rules = [
             'incoming_request_no' => 'required',
             'office_or_barangay_or_organization_name' => 'required',
-            // 'date_requested' => 'required',
-            // 'date_returned' => 'required',
-            // 'actual_returned_date' => 'required', //* ONLY required upon updating the status to DONE
             'category_id' => 'required',
-            // 'venue_id' => 'required',
-            // 'time_started' => 'required',
-            // 'time_ended' => 'required',
             'date_and_time' => 'required',
             'contact_person_name' => 'required',
             'contact_person_number' => 'required',
@@ -76,9 +66,6 @@ class Requests extends Component
     {
         return [
             'category_id' => 'category',
-            // 'sub_category_id' => 'sub-category',
-            // 'venue_id' => 'venue',
-            // 'date_returned' => 'return date',
             'status_id' => 'status'
         ];
     }
@@ -109,17 +96,35 @@ class Requests extends Component
             [
                 'incoming_requests' => $this->loadIncomingRequests(),
                 'category_select' => $this->loadCategorySelect(),
-                'status_select' => $this->loadStatusSelect()
+                'status_select' => $this->loadStatusSelect(),
+                'division_select' => $this->loadDivisionSelect()
             ]
         );
     }
 
+    //TODO: Make sure that the forwarded division can edit the incoming request.
+    /**
+     * The idea is that anyone can see the incoming requests but when forwarded to division, only the division can see the incoming requests.
+     */
+
     public function loadIncomingRequests()
     {
+        $user = auth()->user();
+
+        $user_division_id = $user->division_id;
+
         return IncomingRequestModel::query()
             ->when($this->filter_status, function ($query) {
                 $query->where('status_id', $this->filter_status);
             })
+            ->when($this->search, function ($query) {
+                $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
+            })
+            ->where('forwarded_to_division_id', $user_division_id)
+            // Apply the division filter only if division_id is not empty and not "1"
+            // ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            //     $query->where('forwarded_to_division_id', $user_division_id);
+            // })
             ->paginate(10);
     }
 
@@ -131,7 +136,13 @@ class Requests extends Component
     public function loadStatusSelect()
     {
         return StatusModel::where('status_type', 'incoming request')
+            ->whereNot('status_name', 'forwarded')
             ->get();
+    }
+
+    public function loadDivisionSelect()
+    {
+        return DivisionModel::whereNot('division_name', 'Admin')->get();
     }
 
     public function createIncomingRequest()
@@ -144,12 +155,7 @@ class Requests extends Component
                 $incoming_request->incoming_request_no = $this->incoming_request_no;
                 $incoming_request->office_or_barangay_or_organization_name = $this->office_or_barangay_or_organization_name;
                 $incoming_request->date_requested = $this->date_requested;
-                // $incoming_request->date_returned = $this->date_returned;
                 $incoming_request->category_id = $this->category_id;
-                // $incoming_request->sub_category_id = $this->sub_category_id;
-                // $incoming_request->venue_id = $this->venue_id;
-                // $incoming_request->time_started = $this->time_started;
-                // $incoming_request->time_ended = $this->time_ended;
                 $incoming_request->date_and_time = $this->date_and_time;
                 $incoming_request->contact_person_name = $this->contact_person_name;
                 $incoming_request->contact_person_number = $this->contact_person_number;
@@ -196,12 +202,7 @@ class Requests extends Component
                     'incoming_request_no',
                     'office_or_barangay_or_organization_name',
                     'date_requested',
-                    // 'date_returned',
                     'category_id',
-                    // 'sub_category_id',
-                    // 'venue_id',
-                    // 'time_started',
-                    // 'time_ended',
                     'date_and_time',
                     'contact_person_name',
                     'contact_person_number',
@@ -253,12 +254,7 @@ class Requests extends Component
                 $incoming_request->incoming_request_no = $this->incoming_request_no;
                 $incoming_request->office_or_barangay_or_organization_name = $this->office_or_barangay_or_organization_name;
                 $incoming_request->date_requested = $this->date_requested;
-                // $incoming_request->date_returned = $this->date_returned;
                 $incoming_request->category_id = $this->category_id;
-                // $incoming_request->sub_category_id = $this->sub_category_id;
-                // $incoming_request->venue_id = $this->venue_id;
-                // $incoming_request->time_started = $this->time_started;
-                // $incoming_request->time_ended = $this->time_ended;
                 $incoming_request->date_and_time = $this->date_and_time;
                 $incoming_request->contact_person_name = $this->contact_person_name;
                 $incoming_request->contact_person_number = $this->contact_person_number;
@@ -303,27 +299,55 @@ class Requests extends Component
         try {
             // Fetch all statuses in a key-value pair: [status_id => status_name]
             $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+            $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
 
             $this->document_history = Activity::where('subject_type', IncomingRequestModel::class)
                 ->where('subject_id', $incoming_request_id)
                 ->where('log_name', 'incoming_request')
-                ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
+                ->whereNotNull('properties->attributes->status_id') //* View logs with changes in status_id ONLY
                 ->orderBy('created_at', 'desc')
                 ->get()
-                ->map(function ($item) use ($statusMap) {
-                    $oldStatusId = $item->properties['old']['status_id'] ?? null;
+                ->map(function ($item) use ($statusMap, $divisionMap) {
+                    // $oldStatusId = $item->properties['old']['status_id'] ?? null; //* OLD attributes
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+                    $division = $item->properties['attributes']['forwarded_to_division_id'] ?? null;
 
                     return [
                         // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
                         'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
                         'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'forwarded_to_division' => $divisionMap[$division] ?? 'N/A',
                         'updated_by' => $item->causer ? $item->causer->name : 'System'
                     ];
                 });
 
             $this->dispatch('show-documentHistoryModal');
         } catch (\Throwable $th) {
+            $this->dispatch('error');
+        }
+    }
+
+    public function forwardToDivision()
+    {
+        $this->validate([
+            'division_id' => 'required'
+        ], [], [
+            'division_id' => 'division'
+        ]);
+
+        try {
+            DB::transaction(function () {
+                $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
+                $incoming_request->forwarded_to_division_id = $this->division_id;
+                $incoming_request->status_id = '3'; // FORWARDED
+                $incoming_request->save();
+            });
+
+            $this->clear();
+            $this->dispatch('hide-forwardToDivisionModal');
+            $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
+        } catch (\Throwable $th) {
+            throw $th;
             $this->dispatch('error');
         }
     }

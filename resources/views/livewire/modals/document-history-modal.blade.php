@@ -34,7 +34,7 @@
                                             badge-light-dark
                                             @endif
                                             text-capitalize">
-                                        {{ $item['status'] }}
+                                        {{ $item['status'] == 'forwarded' ? $item['status'] .' ('. $item['forwarded_to_division'] .')' : $item['status'] }}
                                     </span>
                                 </td>
                                 <td>{{ $item['updated_by'] }}</td>

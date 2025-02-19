@@ -28,7 +28,7 @@
                     </div>
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Division</label>
-                        <select class="form-select" aria-label="Select example" wire:wire:model="division_id">
+                        <select class="form-select" aria-label="Select example" wire:model="division_id">
                             <option>Open this select menu</option>
                             @foreach ($division_select as $item)
                             <option value="{{ $item->id }}">{{ $item->division_name }}</option>
