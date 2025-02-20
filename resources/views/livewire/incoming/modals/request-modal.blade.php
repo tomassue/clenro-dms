@@ -37,7 +37,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Office/Brgy/Org</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="office_or_barangay_or_organization_name" />
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="office_or_barangay_or_organization_name" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('office_or_barangay_or_organization_name')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -47,7 +47,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Date Requested</label>
-                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_requested" />
+                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date_requested" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('date_requested')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -57,7 +57,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
-                        <select class="form-select" aria-label="Select example" wire:model.live="category_id">
+                        <select class="form-select" aria-label="Select example" wire:model.live="category_id" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }}>
                             <option value="">Open this select menu</option>
                             @foreach($category_select as $item)
                             <option value="{{ $item->id }}">{{ $item->incoming_request_category_name }}</option>
@@ -72,7 +72,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Date and Time</label>
-                        <input type="datetime-local" class="form-control mb-3 mb-lg-0" wire:model="date_and_time" />
+                        <input type="datetime-local" class="form-control mb-3 mb-lg-0" wire:model="date_and_time" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('date_and_time')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -82,7 +82,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Person (Name)</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_name" />
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_name" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('contact_person_name')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -92,7 +92,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Number</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_number" />
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_number" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('contact_person_number')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -102,8 +102,18 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Description</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="description" />
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="description" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('description')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-12 mb-10" style="display: {{ auth()->user()->division_id != 1 || empty(auth()->user()->division_id) ? '' : 'none' }};">
+                        <label class="required fw-bold fs-6 mb-2">Remarks</label>
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="remarks" />
+                        @error('remarks')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>

@@ -25,7 +25,8 @@ class IncomingRequestModel extends Model
         'contact_person_number',
         'description',
         'file_id',
-        'status_id'
+        'status_id',
+        'remarks'
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -71,20 +72,15 @@ class IncomingRequestModel extends Model
         return $this->belongsTo(IncomingRequestCategoryModel::class, 'category_id', 'id');
     }
 
-    // public function sub_category()
-    // {
-    //     return $this->belongsTo(SubCategoryModel::class, 'sub_category_id', 'id');
-    // }
-
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
-    // public function venue()
-    // {
-    //     return $this->belongsTo(VenueModel::class, 'venue_id', 'id');
-    // }
+    public function division()
+    {
+        return $this->belongsTo(DivisionModel::class, 'forwarded_to_division_id', 'id');
+    }
 
     /**
      * Accessor for formatted date_requested.

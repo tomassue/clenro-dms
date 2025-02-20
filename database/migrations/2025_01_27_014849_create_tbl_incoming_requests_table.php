@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('description');
             $table->json('file_id');
             $table->string('status_id'); // Foreign Key
+            $table->string('remarks')->nullable();
             $table->string('forwarded_to_division_id')->nullable(); // Foreign Key
             $table->softDeletes();
             $table->timestamps();

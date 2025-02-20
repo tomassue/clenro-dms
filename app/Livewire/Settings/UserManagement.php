@@ -122,7 +122,7 @@ class UserManagement extends Component
         $this->validate($this->rules(), [], $this->attributes());
 
         try {
-            $user = User::findOrFail($this->user_id->id);
+            $user = User::findOrFail($this->user_id);
 
             DB::transaction(function () use ($user) {
                 $user->name = $this->name;

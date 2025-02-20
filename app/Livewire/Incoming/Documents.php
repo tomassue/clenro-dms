@@ -4,7 +4,9 @@ namespace App\Livewire\Incoming;
 
 use App\Models\CategoryModel;
 use App\Models\FilesModel;
+use App\Models\IncomingDocumentCategoryModel;
 use App\Models\IncomingDocumentModel;
+use App\Models\IncomingRequestCategoryModel;
 use App\Models\StatusModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +32,7 @@ class Documents extends Component
         $file_id = [],
         $date,
         $status_id,
+        $forwarded_to_division_id,
         $remarks;
     public $preview_file_id = [];
     public $document_history = [];
@@ -72,7 +75,7 @@ class Documents extends Component
             [
                 'incoming_documents' => $this->loadIncomingDocuments(),
                 'status_select' => $this->loadStatusSelect(),
-                'category_select' => $this->loadCategorySelect()
+                'incoming_document_category_select' => $this->loadIncomingDocumentCategorySelect()
             ]
         );
     }
@@ -96,11 +99,9 @@ class Documents extends Component
             ->get();
     }
 
-    public function loadCategorySelect()
+    public function loadIncomingDocumentCategorySelect()
     {
-        return CategoryModel::query()
-            ->where('category_type_id', 2)
-            ->get();
+        return IncomingDocumentCategoryModel::all();
     }
 
     public function createIncomingDocument()

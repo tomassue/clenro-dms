@@ -29,7 +29,7 @@
                         <label class="required fw-bold fs-6 mb-2">Category</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
                             <option value="">Open this select menu</option>
-                            @foreach($category_select as $item)
+                            @foreach($incoming_document_category_select as $item)
                             <option value="{{ $item->id }}">{{ $item->category_name }}</option>
                             @endforeach
                         </select>

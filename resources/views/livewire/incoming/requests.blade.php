@@ -2,7 +2,7 @@
     <!--begin::Row-->
     <div class="row g-5 g-xl-8">
         <!--begin::Col-->
-        <div class="col-xxl-12">
+        <div class="col-xxl-9">
             <!--begin::Mixed Widget 5-->
             <div class="card card-xxl-stretch">
                 <!--begin::Beader-->
@@ -40,7 +40,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-2 text-end">
+                        <div class="col-sm-12 col-md-12 col-lg-2 text-end" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }}">
                             <button type="button" class="btn btn-primary" wire:click="$dispatch('show-incomingRequestModal')">Add Request</button>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                                                 data-kt-menu="true">
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readIncomingRequest({{ $item->id }})">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="readIncomingRequest({{ $item->id }})">
                                                         Edit
                                                     </a>
                                                 </div>
@@ -103,7 +103,7 @@
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
                                                         Forward
                                                     </a>
                                                 </div>
@@ -111,7 +111,7 @@
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readDocumentHistory({{ $item->id }})">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="readDocumentHistory({{ $item->id }})">
                                                         History
                                                     </a>
                                                 </div>
@@ -137,6 +137,72 @@
                 <!--end::Body-->
             </div>
             <!--end::Mixed Widget 5-->
+        </div>
+        <!--end::Col-->
+
+        <!--begin::Col-->
+        <div class="col-xxl-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recents</h3>
+                    <div class="card-toolbar">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- begin::Items -->
+                    <div class="timeline-label">
+                        @foreach ($recent_forwarded_incoming_requests as $item)
+                        <!--begin::Item-->
+                        <div class="timeline-item">
+                            <!--begin::Label-->
+                            <div class="timeline-label fw-bolder text-gray-800 fs-9">
+                                {{ $item->updated_at->diffForHumans() }}
+                            </div>
+                            <!--end::Label-->
+                            <!--begin::Badge-->
+                            <div class="timeline-badge">
+                                <i class="fa fa-genderless
+                                @if($item->status->status_name == 'pending')
+                                text-danger
+                                @elseif($item->status->status_name == 'processed')
+                                text-primary
+                                @elseif($item->status->status_name == 'forwarded')
+                                text-warning
+                                @elseif($item->status->status_name == 'completed')
+                                text-success
+                                @elseif($item->status->status_name == 'cancelled')
+                                text-dark
+                                @endif
+                                fs-1"></i>
+                            </div>
+                            <!--end::Badge-->
+                            <!--begin::Text-->
+                            <div class="fw-mormal timeline-content text-muted ps-3">
+                                {{ $item->incoming_request_no }}
+                                <span class="badge 
+                                @if($item->status->status_name == 'pending')
+                                badge-light-danger
+                                @elseif($item->status->status_name == 'processed')
+                                badge-light-primary
+                                @elseif($item->status->status_name == 'forwarded')
+                                badge-light-warning
+                                @elseif($item->status->status_name == 'completed')
+                                badge-light-success
+                                @elseif($item->status->status_name == 'cancelled')
+                                badge-light-dark
+                                @endif 
+                                text-capitalize">
+                                    {{ $item->status->status_name }}
+                                </span> ({{ $item->division->division_name }})
+                            </div>
+                            <!--end::Text-->
+                        </div>
+                        <!--end::Item-->
+                        @endforeach
+                    </div>
+                    <!-- end::Items -->
+                </div>
+            </div>
         </div>
         <!--end::Col-->
     </div>

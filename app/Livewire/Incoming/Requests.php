@@ -38,7 +38,8 @@ class Requests extends Component
         $contact_person_number,
         $description,
         $file_id = [],
-        $status_id;
+        $status_id,
+        $remarks;
     public $division_id; //* Forwarded to division id
     public $preview_file_id = [];
     public $document_history = [];
@@ -95,6 +96,7 @@ class Requests extends Component
             'livewire.incoming.requests',
             [
                 'incoming_requests' => $this->loadIncomingRequests(),
+                'recent_forwarded_incoming_requests' => $this->loadRecentForwardedIncomingRequests(),
                 'category_select' => $this->loadCategorySelect(),
                 'status_select' => $this->loadStatusSelect(),
                 'division_select' => $this->loadDivisionSelect()
@@ -120,12 +122,24 @@ class Requests extends Component
             ->when($this->search, function ($query) {
                 $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
             })
-            ->where('forwarded_to_division_id', $user_division_id)
-            // Apply the division filter only if division_id is not empty and not "1"
-            // ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
-            //     $query->where('forwarded_to_division_id', $user_division_id);
-            // })
+            ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+                $query->where(function ($subQuery) use ($user_division_id) {
+                    $subQuery->whereNull('forwarded_to_division_id')
+                        ->orWhere('forwarded_to_division_id', $user_division_id);
+                });
+            })
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
+    }
+
+    public function loadRecentForwardedIncomingRequests()
+    {
+        return IncomingRequestModel::query()
+            ->with('division')
+            ->whereNotNull('forwarded_to_division_id')
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->get();
     }
 
     public function loadCategorySelect()
@@ -282,6 +296,7 @@ class Requests extends Component
                 }
 
                 $incoming_request->status_id = $this->status_id;
+                $incoming_request->remarks = $this->remarks;
                 $incoming_request->save();
             });
 
