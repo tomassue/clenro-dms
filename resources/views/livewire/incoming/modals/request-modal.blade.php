@@ -165,3 +165,95 @@
         </div>
     </div>
 </div>
+
+<!-- viewIncomingRequestModal -->
+<div class="modal fade" id="viewIncomingRequestModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewIncomingRequestModalLabel" aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="viewIncomingRequestModalLabel">View Incoming Request</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" wire:click="clear"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Status -->
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Status:</label>
+                    <p class="form-control-plaintext text-capitalize">{{ $status_id }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Incoming Request No.:</label>
+                    <p class="form-control-plaintext">{{ $incoming_request_no }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Office/Brgy/Org:</label>
+                    <p class="form-control-plaintext">{{ $office_or_barangay_or_organization_name }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Date Requested:</label>
+                    <p class="form-control-plaintext">{{ $date_requested }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Category:</label>
+                    <p class="form-control-plaintext">{{ $category_id }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Date and Time:</label>
+                    <p class="form-control-plaintext">{{ $date_and_time }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Contact Person (Name):</label>
+                    <p class="form-control-plaintext">{{ $contact_person_name }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Contact Number:</label>
+                    <p class="form-control-plaintext">{{ $contact_person_number }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Description:</label>
+                    <p class="form-control-plaintext">{{ $description }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <label class="fw-bold fs-6 mb-2">Remarks:</label>
+                    <p class="form-control-plaintext">{{ $remarks }}</p>
+                </div>
+
+                <div class="col-12 mb-10">
+                    <table class="table table-row-dashed table-row-gray-300 gy-7">
+                        <thead>
+                            <tr class="fw-bolder fs-6 text-gray-800">
+                                <th width="80%">File</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($preview_file_id as $item)
+                            <tr>
+                                <td>{{ $item->file_name }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-info" wire:click="readFile({{ $item->id }})">View</a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="2" class="text-center">No files.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="clear">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

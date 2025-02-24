@@ -30,7 +30,7 @@
                         <select class="form-select" aria-label="Select example" wire:model.live="category_id">
                             <option value="">Open this select menu</option>
                             @foreach($incoming_document_category_select as $item)
-                            <option value="{{ $item->id }}">{{ $item->category_name }}</option>
+                            <option value="{{ $item->id }}">{{ $item->incoming_document_category_name }}</option>
                             @endforeach
                         </select>
                         @error('category_id')

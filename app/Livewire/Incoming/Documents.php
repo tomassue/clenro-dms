@@ -3,6 +3,7 @@
 namespace App\Livewire\Incoming;
 
 use App\Models\CategoryModel;
+use App\Models\DivisionModel;
 use App\Models\FilesModel;
 use App\Models\IncomingDocumentCategoryModel;
 use App\Models\IncomingDocumentModel;
@@ -34,6 +35,7 @@ class Documents extends Component
         $status_id,
         $forwarded_to_division_id,
         $remarks;
+    public $division_id; //* Forwarded to division id
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -75,13 +77,17 @@ class Documents extends Component
             [
                 'incoming_documents' => $this->loadIncomingDocuments(),
                 'status_select' => $this->loadStatusSelect(),
-                'incoming_document_category_select' => $this->loadIncomingDocumentCategorySelect()
+                'incoming_document_category_select' => $this->loadIncomingDocumentCategorySelect(),
+                'division_select' => $this->loadDivisionSelect()
             ]
         );
     }
 
     public function loadIncomingDocuments()
     {
+        $user = auth()->user();
+        $user_division_id = $user->division_id;
+
         return IncomingDocumentModel::query()
             ->when($this->search, function ($query) {
                 $query->where('category_id', 'like', '%' . $this->search . '%')
@@ -90,6 +96,10 @@ class Documents extends Component
             ->when($this->filter_status, function ($query) {
                 $query->where('status_id', 'like', '%' . $this->filter_status . '%');
             })
+            ->when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+                $query->where('forwarded_to_division_id', $user_division_id);
+            })
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
@@ -102,6 +112,11 @@ class Documents extends Component
     public function loadIncomingDocumentCategorySelect()
     {
         return IncomingDocumentCategoryModel::all();
+    }
+
+    public function loadDivisionSelect()
+    {
+        return DivisionModel::whereNot('division_name', 'Admin')->get();
     }
 
     public function createIncomingDocument()
@@ -245,6 +260,7 @@ class Documents extends Component
         try {
             // Fetch all statuses in a key-value pair: [status_id => status_name]
             $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+            $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
 
             $this->document_history = Activity::where('subject_type', IncomingDocumentModel::class)
                 ->where('subject_id', $incoming_document_id)
@@ -252,20 +268,48 @@ class Documents extends Component
                 ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
                 ->orderBy('created_at', 'desc')
                 ->get()
-                ->map(function ($item) use ($statusMap) {
+                ->map(function ($item) use ($statusMap, $divisionMap) {
                     $oldStatusId = $item->properties['old']['status_id'] ?? null;
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+                    $division = $item->properties['attributes']['forwarded_to_division_id'] ?? null;
 
                     return [
                         // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
                         'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
                         'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'forwarded_to_division' => $divisionMap[$division] ?? 'N/A',
                         'updated_by' => $item->causer ? $item->causer->name : 'System'
                     ];
                 });
 
             $this->dispatch('show-documentHistoryModal');
         } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function forwardToDivision()
+    {
+        $this->validate([
+            'division_id' => 'required'
+        ], [], [
+            'division_id' => 'division'
+        ]);
+
+        try {
+            DB::transaction(function () {
+                $incoming_request = IncomingDocumentModel::findOrFail($this->incoming_document_id);
+                $incoming_request->forwarded_to_division_id = $this->division_id;
+                $incoming_request->status_id = '8'; // FORWARDED
+                $incoming_request->save();
+            });
+
+            $this->clear();
+            $this->dispatch('hide-forwardToDivisionModal');
+            $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
             $this->dispatch('error');
         }
     }

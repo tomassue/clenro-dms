@@ -18,7 +18,8 @@ class IncomingDocumentModel extends Model
         "file_id",
         "date",
         "status_id",
-        "remarks"
+        "remarks",
+        "forwarded_to_division_id"
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -31,7 +32,7 @@ class IncomingDocumentModel extends Model
 
     public function category()
     {
-        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+        return $this->belongsTo(IncomingDocumentCategoryModel::class, 'category_id', 'id');
     }
 
     public function status()

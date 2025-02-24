@@ -58,7 +58,7 @@
                                 <tbody>
                                     @forelse($incoming_documents as $item)
                                     <tr>
-                                        <td>{{ $item->category->category_name }}</td>
+                                        <td>{{ $item->category->incoming_document_category_name }}</td>
                                         <td>{{ $item->info }}</td>
                                         <td>
                                             <span class="badge 
@@ -78,8 +78,50 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readIncomingDocument({{ $item->id }})">Edit</a>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="readDocumentHistory({{ $item->id }})">History</a>
+                                            <!--begin::Trigger-->
+                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
+                                                data-kt-menu-trigger="click"
+                                                data-kt-menu-placement="bottom-start">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <!--end::Trigger-->
+
+                                            <!--begin::Menu-->
+                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
+                                                data-kt-menu="true">
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3" style="display: {{ $item->status->status_name == 'completed' ? '' : 'none' }};">
+                                                    <a href="#" class="menu-link px-3" wire:click="viewIncomingRequest({{ $item->id }})">
+                                                        View
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3" style="display: {{ $item->status->status_name == 'completed' ? 'none' : '' }};">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="readIncomingDocument({{ $item->id }})">
+                                                        Edit
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
+                                                        Forward
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="readDocumentHistory({{ $item->id }})">
+                                                        History
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                            </div>
+                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty
@@ -107,6 +149,8 @@
     @include('livewire.incoming.modals.document-modal')
 
     @include('livewire.modals.document-history-modal')
+
+    @include('livewire.incoming.modals.forward-to-division-modal')
 </div>
 
 @script
@@ -121,6 +165,11 @@
 
     $wire.on('show-documentHistoryModal', () => {
         $('#documentHistoryModal').modal('show');
+    });
+
+    $wire.on('show-forwardToDivisionModal', (id) => {
+        $('#forwardToDivisionModal').modal('show');
+        $wire.incoming_document_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
     });
 
     /* -------------------------------------------------------------------------- */

@@ -104,15 +104,29 @@ class Requests extends Component
         );
     }
 
-    //TODO: Make sure that the forwarded division can edit the incoming request.
-    /**
-     * The idea is that anyone can see the incoming requests but when forwarded to division, only the division can see the incoming requests.
-     */
-
     public function loadIncomingRequests()
     {
-        $user = auth()->user();
+        // $user = auth()->user();
 
+        // $user_division_id = $user->division_id;
+
+        // return IncomingRequestModel::query()
+        //     ->when($this->filter_status, function ($query) {
+        //         $query->where('status_id', $this->filter_status);
+        //     })
+        //     ->when($this->search, function ($query) {
+        //         $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
+        //     })
+        //     ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+        //         $query->where(function ($subQuery) use ($user_division_id) {
+        //             $subQuery->whereNull('forwarded_to_division_id')
+        //                 ->orWhere('forwarded_to_division_id', $user_division_id);
+        //         });
+        //     })
+        //     ->orderBy('created_at', 'desc')
+        //     ->paginate(10);
+
+        $user = auth()->user();
         $user_division_id = $user->division_id;
 
         return IncomingRequestModel::query()
@@ -122,11 +136,8 @@ class Requests extends Component
             ->when($this->search, function ($query) {
                 $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
             })
-            ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
-                $query->where(function ($subQuery) use ($user_division_id) {
-                    $subQuery->whereNull('forwarded_to_division_id')
-                        ->orWhere('forwarded_to_division_id', $user_division_id);
-                });
+            ->when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+                $query->where('forwarded_to_division_id', $user_division_id);
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -303,6 +314,40 @@ class Requests extends Component
             $this->clear();
             $this->dispatch('hide-incomingRequestModal');
             $this->dispatch('success', message: 'Incoming Request updated successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function viewIncomingRequest($incoming_request_id)
+    {
+        try {
+            $this->incoming_request_id = $incoming_request_id;
+
+            $incoming_request = IncomingRequestModel::withTrashed()->findOrFail($incoming_request_id);
+            $this->status_id = $incoming_request->status->status_name;
+            $this->incoming_request_no = $incoming_request->incoming_request_no;
+            $this->office_or_barangay_or_organization_name = $incoming_request->office_or_barangay_or_organization_name;
+            $this->date_requested = $incoming_request->formatted_date_requested;
+            $this->category_id = $incoming_request->category->incoming_request_category_name;
+            $this->date_and_time = $incoming_request->formatted_date_and_time;
+            $this->contact_person_name = $incoming_request->contact_person_name;
+            $this->contact_person_number = $incoming_request->contact_person_number;
+            $this->description = $incoming_request->description;
+            $this->status_id = $incoming_request->status->status_name;
+            $this->remarks = $incoming_request->remarks;
+
+            if ($incoming_request->file_id) {
+                $this->preview_file_id = []; // unset it first
+
+                foreach (json_decode($incoming_request->file_id) as $item) {
+                    $files = FilesModel::findOrFail($item);
+                    $this->preview_file_id[] = $files;
+                }
+            }
+
+            $this->dispatch('show-viewIncomingRequestModal');
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('error');

@@ -92,6 +92,16 @@ class IncomingRequestModel extends Model
         return Carbon::parse($this->date_requested)->format('M d, Y'); // e.g., Jan 01, 2024
     }
 
+    /**
+     * Accessor for formatted date_requested.
+     *
+     * @return string
+     */
+    public function getFormattedDateAndTimeAttribute()
+    {
+        return Carbon::parse($this->date_and_time)->format('M d, Y h:i A');
+    }
+
     // /**
     //  * Accessor for formatted date_returned.
     //  *
