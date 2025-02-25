@@ -72,13 +72,13 @@
                                             case 'App\Models\OutgoingRisModel':
                                             echo 'RIS';
                                             break;
-                                            case 'App\Models\OutgoingProcurementModel';
+                                            case 'App\Models\OutgoingProcurementModel':
                                             echo 'Procurement';
                                             break;
-                                            case 'App\Models\OutgoingPayrollModel';
+                                            case 'App\Models\OutgoingPayrollModel':
                                             echo 'Payroll';
                                             break;
-                                            case 'App\Models\OutgoingOthersModel';
+                                            case 'App\Models\OutgoingOthersModel':
                                             echo 'Others';
                                             break;
                                             default:

@@ -76,6 +76,7 @@ class Documents extends Component
             'livewire.incoming.documents',
             [
                 'incoming_documents' => $this->loadIncomingDocuments(),
+                'recent_forwarded_incoming_documents' => $this->loadRecentForwardedIncomingDocuments(),
                 'status_select' => $this->loadStatusSelect(),
                 'incoming_document_category_select' => $this->loadIncomingDocumentCategorySelect(),
                 'division_select' => $this->loadDivisionSelect()
@@ -101,6 +102,16 @@ class Documents extends Component
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+    }
+
+    public function loadRecentForwardedIncomingDocuments()
+    {
+        return IncomingDocumentModel::query()
+            ->with('division')
+            ->orderBy('created_at', 'desc')
+            ->whereNotNull('forwarded_to_division_id')
+            ->take(5)
+            ->get();
     }
 
     public function loadStatusSelect()
@@ -285,6 +296,36 @@ class Documents extends Component
             $this->dispatch('show-documentHistoryModal');
         } catch (\Throwable $th) {
             // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function viewIncomingDocument($incoming_document_id)
+    {
+        try {
+            $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
+            $this->fill(
+                $incoming_document->only(
+                    'info',
+                    'remarks'
+                )
+            );
+            $this->category_id = $incoming_document->category->incoming_document_category_name;
+            $this->date = $incoming_document->formatted_date;
+            $this->status_id = $incoming_document->status->status_name;
+
+            if ($incoming_document->file_id) {
+                $this->preview_file_id = []; // unset it first
+
+                foreach (json_decode($incoming_document->file_id) as $item) {
+                    $files = FilesModel::findOrFail($item);
+                    $this->preview_file_id[] = $files;
+                }
+            }
+
+            $this->dispatch('show-viewIncomingDocumentModal');
+        } catch (\Throwable $th) {
+            //throw $th;
             $this->dispatch('error');
         }
     }

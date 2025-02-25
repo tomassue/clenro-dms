@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -38,5 +39,20 @@ class IncomingDocumentModel extends Model
     public function status()
     {
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(DivisionModel::class, 'forwarded_to_division_id', 'id');
+    }
+
+    /**
+     * Accessor for formatted date.
+     *
+     * @return string
+     */
+    public function getFormattedDateAttribute()
+    {
+        return Carbon::parse($this->date)->format('M d, Y');
     }
 }

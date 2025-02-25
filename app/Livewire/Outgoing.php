@@ -104,6 +104,7 @@ class Outgoing extends Component
     public function loadOutgoing()
     {
         return OutgoingModel::query()
+            ->with('status')
             ->when($this->search, function ($query) {
                 $query->where('category_id', 'like', '%' . $this->search . '%')
                     ->orWhere('info', 'like', '%' . $this->search . '%');

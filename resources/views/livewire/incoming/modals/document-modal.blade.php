@@ -117,3 +117,108 @@
         </div>
     </div>
 </div>
+
+<!-- viewIncomingDocumentModal -->
+<div
+    class="modal fade"
+    id="viewIncomingDocumentModal"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="viewIncomingDocumentModalLabel"
+    aria-hidden="true"
+    wire:ignore.self>
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="viewIncomingDocumentModalLabel">
+                    View Incoming Document
+                </h1>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    wire:click="clear"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Status -->
+                <div class="col-12 mb-3">
+                    <label class="fw-bold fs-6 mb-2">Status</label>
+                    <div class="form-control-plaintext text-capitalize">
+                        {{ $status_id ?? 'N/A' }}
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="col-12 mb-3">
+                    <label class="fw-bold fs-6 mb-2">Category</label>
+                    <div class="form-control-plaintext">
+                        {{ $category_id ?? 'N/A' }}
+                    </div>
+                </div>
+
+                <!-- Document Info -->
+                <div class="col-12 mb-3">
+                    <label class="fw-bold fs-6 mb-2">Document Info</label>
+                    <div class="form-control-plaintext">
+                        {{ $info }}
+                    </div>
+                </div>
+
+                <!-- Date -->
+                <div class="col-12 mb-3">
+                    <label class="fw-bold fs-6 mb-2">Date</label>
+                    <div class="form-control-plaintext">
+                        {{ $date }}
+                    </div>
+                </div>
+
+                <!-- Remarks -->
+                <div class="col-12 mb-3">
+                    <label class="fw-bold fs-6 mb-2">Remarks</label>
+                    <div class="form-control-plaintext">
+                        {{ $remarks ?? 'N/A' }}
+                    </div>
+                </div>
+
+                <!-- Files -->
+                <div class="col-12 mb-3">
+                    <table class="table table-row-dashed table-row-gray-300 gy-7">
+                        <thead>
+                            <tr class="fw-bolder fs-6 text-gray-800">
+                                <th width="80%">File</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($preview_file_id as $item)
+                            <tr>
+                                <td>{{ $item->file_name }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-info" wire:click="readFile({{ $item->id }})">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="2" class="text-center">No files.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                    wire:click="clear">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
