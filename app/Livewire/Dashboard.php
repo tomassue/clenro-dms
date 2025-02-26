@@ -2,14 +2,45 @@
 
 namespace App\Livewire;
 
+use App\Models\IncomingRequestModel;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Title('Dashboard')]
 class Dashboard extends Component
 {
+    use WithPagination;
+
+    public $search;
+
     public function render()
     {
-        return view('livewire.dashboard');
+        return view('livewire.dashboard', [
+            'incoming_requests' => $this->loadIncomingRequests(),
+            'total_requests' => $this->countTotalIncomingRequest()
+        ]);
+    }
+
+    public function countTotalIncomingRequest()
+    {
+        return IncomingRequestModel::count();
+    }
+
+    public function loadIncomingRequests()
+    {
+        $user = auth()->user();
+        $user_division_id = $user->division_id;
+
+        return IncomingRequestModel::query()
+            ->when($this->search, function ($query) {
+                $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
+            })
+            ->when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+                $query->where('forwarded_to_division_id', $user_division_id);
+            })
+            ->where('status_id', '1')
+            ->orderBy('created_at', 'asc')
+            ->paginate(10);
     }
 }

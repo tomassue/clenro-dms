@@ -40,7 +40,8 @@ class Requests extends Component
         $file_id = [],
         $status_id,
         $remarks;
-    public $division_id; //* Forwarded to division id
+    public $division_name,
+        $division_id; //* Forwarded to division id
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -222,6 +223,13 @@ class Requests extends Component
             $this->incoming_request_id = $incoming_request_id;
 
             $incoming_request = IncomingRequestModel::withTrashed()->findOrFail($incoming_request_id);
+
+            if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_request->status->status_name == 'forwarded') {
+                $incoming_request = IncomingRequestModel::findOrFail($incoming_request_id);
+                $incoming_request->status_id = '15'; // Received
+                $incoming_request->save();
+            }
+
             $this->fill(
                 $incoming_request->only(
                     'incoming_request_no',
@@ -383,6 +391,16 @@ class Requests extends Component
 
             $this->dispatch('show-documentHistoryModal');
         } catch (\Throwable $th) {
+            $this->dispatch('error');
+        }
+    }
+
+    public function checkForwardedToDivision(IncomingRequestModel $incoming_request_id)
+    {
+        try {
+            $this->division_name = $incoming_request_id->division->division_name ?? '';
+        } catch (\Throwable $th) {
+            // throw $th;
             $this->dispatch('error');
         }
     }

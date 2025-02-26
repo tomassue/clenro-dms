@@ -35,7 +35,8 @@ class Documents extends Component
         $status_id,
         $forwarded_to_division_id,
         $remarks;
-    public $division_id; //* Forwarded to division id
+    public $division_id, //* Forwarded to division id
+        $division_name;
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -117,6 +118,7 @@ class Documents extends Component
     public function loadStatusSelect()
     {
         return StatusModel::where('status_type', 'incoming document')
+            ->whereNot('status_name', 'forwarded')
             ->get();
     }
 
@@ -177,6 +179,13 @@ class Documents extends Component
             $this->incoming_document_id = $incoming_document_id;
 
             $incoming_document = IncomingDocumentModel::withTrashed()->findOrFail($incoming_document_id);
+
+            if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_document->status->status_name == 'forwarded') {
+                $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
+                $incoming_document->status_id = '15'; // Received
+                $incoming_document->save();
+            }
+
             $this->fill(
                 $incoming_document->only(
                     'category_id',
@@ -326,6 +335,16 @@ class Documents extends Component
             $this->dispatch('show-viewIncomingDocumentModal');
         } catch (\Throwable $th) {
             //throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function checkForwardedToDivision(IncomingDocumentModel $incoming_document_id)
+    {
+        try {
+            $this->division_name = $incoming_document_id->division->division_name ?? '';
+        } catch (\Throwable $th) {
+            // throw $th;
             $this->dispatch('error');
         }
     }

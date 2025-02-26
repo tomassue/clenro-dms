@@ -106,11 +106,19 @@ class Outgoing extends Component
         return OutgoingModel::query()
             ->with('status')
             ->when($this->search, function ($query) {
-                $query->where('category_id', 'like', '%' . $this->search . '%')
-                    ->orWhere('info', 'like', '%' . $this->search . '%');
+                $query->where(function ($q) {
+                    $q->where('details', 'like', '%' . $this->search . '%')
+                        ->orWhere('destination', 'like', '%' . $this->search . '%')
+                        ->orWhere('person_responsible', 'like', '%' . $this->search . '%');
+                });
             })
             ->when($this->filter_status, function ($query) {
-                $query->where('status_id', 'like', '%' . $this->filter_status . '%');
+                // If a filter is provided, simply filter by it.
+                // If filter_status equals '13', only status 13 records will be shown.
+                $query->where('status_id', $this->filter_status);
+            }, function ($query) {
+                // When no filter is provided, exclude status_id '13'.
+                $query->where('status_id', '!=', '13');
             })
             ->paginate(10);
     }
@@ -549,7 +557,7 @@ class Outgoing extends Component
 
     public function updateOutgoing()
     {
-        // $this->validate();
+        $this->validate();
 
         //* $this->outgoing_id is already a model instance of OutgoingModel; from readOutgoing()
 

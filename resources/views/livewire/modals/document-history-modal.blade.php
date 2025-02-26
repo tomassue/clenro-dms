@@ -32,6 +32,8 @@
                                             badge-light-success
                                             @elseif($item['status'] == 'cancelled')
                                             badge-light-dark
+                                            @else
+                                            badge-secondary
                                             @endif
                                             text-capitalize">
                                         {{

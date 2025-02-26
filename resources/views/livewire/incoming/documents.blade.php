@@ -72,6 +72,8 @@
                                             badge-light-success
                                             @elseif($item->status->status_name == 'cancelled')
                                             badge-light-dark
+                                            @else
+                                            badge-secondary
                                             @endif
                                             text-capitalize">
                                                 {{ $item->status->status_name }}
@@ -196,6 +198,8 @@
                                 badge-light-success
                                 @elseif($item->status->status_name == 'cancelled')
                                 badge-light-dark
+                                @else
+                                badge-secondary
                                 @endif 
                                 text-capitalize">
                                     {{ $item->status->status_name }}
@@ -236,8 +240,13 @@
     });
 
     $wire.on('show-forwardToDivisionModal', (id) => {
-        $('#forwardToDivisionModal').modal('show');
         $wire.incoming_document_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
+        $wire.checkForwardedToDivision(id.id);
+        $('#forwardToDivisionModal').modal('show');
+    });
+
+    $wire.on('hide-forwardToDivisionModal', (id) => {
+        $('#forwardToDivisionModal').modal('hide');
     });
 
     $wire.on('show-viewIncomingDocumentModal', () => {
