@@ -8,7 +8,7 @@
                     <h3 class="card-title">Pending Request</h3>
                 </div>
                 <div class="card-body text-center" style="font-size: 50px;">
-                    ##
+                    {{ $pending_requests }}
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
                     <h3 class="card-title">Completed Request</h3>
                 </div>
                 <div class="card-body text-center" style="font-size: 50px;">
-                    ##
+                    {{ $completed_requests }}
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
                             </thead>
                             <tbody>
                                 @forelse($incoming_requests as $item)
-                                <tr>
+                                <tr style="cursor: pointer" wire:click="$dispatch('incoming_request')">
                                     <td>{{ $item->incoming_request_no }}</td>
                                     <td>{{ $item->formatted_date_requested }}</td>
                                     <td>{{ $item->office_or_barangay_or_organization_name }}</td>
@@ -87,3 +87,11 @@
     </div>
     <!--end::Row-->
 </div>
+
+@script
+<script>
+    $wire.on('incoming_request', () => {
+        dd('wew');
+    });
+</script>
+@endscript

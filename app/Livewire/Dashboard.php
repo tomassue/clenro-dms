@@ -18,13 +18,45 @@ class Dashboard extends Component
     {
         return view('livewire.dashboard', [
             'incoming_requests' => $this->loadIncomingRequests(),
-            'total_requests' => $this->countTotalIncomingRequest()
+            'total_requests' => $this->countTotalIncomingRequest(),
+            'pending_requests' => $this->countPendingIncomingRequest(),
+            'completed_requests' => $this->countCompletedIncomingRequest(),
         ]);
     }
 
     public function countTotalIncomingRequest()
     {
-        return IncomingRequestModel::count();
+        $user = auth()->user();
+        $user_division_id = $user->division_id;
+
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            $query->where('forwarded_to_division_id', $user_division_id);
+        })
+            ->count();
+    }
+
+    public function countPendingIncomingRequest()
+    {
+        $user = auth()->user();
+        $user_division_id = $user->division_id;
+
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            $query->where('forwarded_to_division_id', $user_division_id);
+        })
+            ->where('status_id', '1') // Pending
+            ->count();
+    }
+
+    public function countCompletedIncomingRequest()
+    {
+        $user = auth()->user();
+        $user_division_id = $user->division_id;
+
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            $query->where('forwarded_to_division_id', $user_division_id);
+        })
+            ->where('status_id', '4') // Completed
+            ->count();
     }
 
     public function loadIncomingRequests()
