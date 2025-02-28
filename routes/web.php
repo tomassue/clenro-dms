@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FileController;
+use App\Livewire\Accomplishments;
 use App\Livewire\AccountSettings\ChangePassword;
 use App\Livewire\Calendar;
 use App\Livewire\Dashboard;
@@ -11,9 +12,7 @@ use App\Livewire\Settings\Category;
 use App\Livewire\Settings\IncomingDocumentCategory;
 use App\Livewire\Settings\IncomingRequestCategory;
 use App\Livewire\Settings\OutgoingCategory;
-use App\Livewire\Settings\SubCategory;
 use App\Livewire\Settings\UserManagement;
-use App\Livewire\Settings\Venue;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,13 +39,15 @@ Route::middleware(['auth', 'default-password'])->group(function () {
     // Calendar
     Route::get('calendar/', Calendar::class)->name('calendar');
 
+    // Accomplishments
+    Route::get('accomplishments/', Accomplishments::class)->name('accomplishments');
+
     // Reference
     Route::get('/reference/user-management', UserManagement::class)->name('user-management');
     Route::get('/reference/category', Category::class)->name('category');
     Route::get('/reference/incoming-request-category', IncomingRequestCategory::class)->name('incoming-request-category');
     Route::get('/reference/incoming-document-category', IncomingDocumentCategory::class)->name('incoming-document-category');
     Route::get('/references/outgoing-category', OutgoingCategory::class)->name('outgoing-category');
-    //// Route::get('/reference/sub-category', SubCategory::class)->name('sub-category'); // Hidden
 });
 
 Route::middleware(['auth'])->group(function () {

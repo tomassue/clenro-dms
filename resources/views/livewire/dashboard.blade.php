@@ -63,7 +63,7 @@
                             </thead>
                             <tbody>
                                 @forelse($incoming_requests as $item)
-                                <tr style="cursor: pointer" wire:click="$dispatch('incoming_request')">
+                                <tr style="cursor: pointer" onclick="window.location='{{ route('incoming.requests') }}'">
                                     <td>{{ $item->incoming_request_no }}</td>
                                     <td>{{ $item->formatted_date_requested }}</td>
                                     <td>{{ $item->office_or_barangay_or_organization_name }}</td>
@@ -87,11 +87,3 @@
     </div>
     <!--end::Row-->
 </div>
-
-@script
-<script>
-    $wire.on('incoming_request', () => {
-        dd('wew');
-    });
-</script>
-@endscript

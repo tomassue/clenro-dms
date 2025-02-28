@@ -94,6 +94,18 @@ class Sidebar extends Component
                                 </span>
                             </a>
                         </div>
+                        <div class="menu-item py-3">
+                            <a class="menu-link menu-center" href="{{ route('accomplishments') }}" title="Accomplishments" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+                                <span class="menu-icon me-0">
+                                    <!--begin::Svg Icon | path: assets/media/icons/duotune/general/gen003.svg-->
+                                    <span class="svg-icon svg-icon-muted svg-icon-2hx"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="M13.0079 2.6L15.7079 7.2L21.0079 8.4C21.9079 8.6 22.3079 9.7 21.7079 10.4L18.1079 14.4L18.6079 19.8C18.7079 20.7 17.7079 21.4 16.9079 21L12.0079 18.8L7.10785 21C6.20785 21.4 5.30786 20.7 5.40786 19.8L5.90786 14.4L2.30785 10.4C1.70785 9.7 2.00786 8.6 3.00786 8.4L8.30785 7.2L11.0079 2.6C11.3079 1.8 12.5079 1.8 13.0079 2.6Z" fill="black"/>
+                                    </svg>
+                                </span>
+                                    <!--end::Svg Icon-->
+                                </span>
+                            </a>
+                        </div>
                         <div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
                             <span class="menu-link menu-center" title="References" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">

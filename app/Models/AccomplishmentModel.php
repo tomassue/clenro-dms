@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class AccomplishmentModel extends Model
+{
+    use SoftDeletes, LogsActivity;
+
+    protected $table = 'tbl_accomplishments';
+
+    protected $fillable = [
+        'accomplishment_category_id',
+        'date',
+        'details',
+        'no_of_participants',
+    ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('accomplishment')
+            ->logOnly(['*'])
+            ->logOnlyDirty();
+    }
+}
