@@ -9,7 +9,7 @@ class AccomplishmentCategoryModel extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tbl_accomplishment_categories';
+    protected $table = 'ref_accomplishment_categories';
 
     protected $fillable = [
         'accomplishment_category_name',

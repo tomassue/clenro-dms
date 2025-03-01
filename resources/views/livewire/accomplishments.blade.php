@@ -23,7 +23,7 @@
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-4 text-end" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }}">
-                            <button type="button" class="btn btn-primary" wire:click="$dispatch('show-incomingRequestModal')">Add Accomplishments</button>
+                            <button type="button" class="btn btn-primary" wire:click="$dispatch('show-accomplishmentModal')">Add Accomplishment</button>
                         </div>
                     </div>
                     <div class="mt-5">
@@ -41,12 +41,12 @@
                                 <tbody>
                                     @forelse($accomplishments as $item)
                                     <tr>
-                                        <td>{{ $item->accomplishment_category_id }}</td>
-                                        <td>{{ $item->date }}</td>
+                                        <td>{{ $item->accomplishment_category->accomplishment_category_name }}</td>
+                                        <td>{{ $item->formatted_date }}</td>
                                         <td>{{ $item->details }}</td>
                                         <td>{{ $item->no_of_participants }}</td>
                                         <td>
-                                            <button class="btn btn-secondary btn-sm">Edit</button>
+                                            <button class="btn btn-secondary btn-sm" wire:click="readAccomplishment({{ $item->id }})">Edit</button>
                                         </td>
                                     </tr>
                                     @empty
@@ -69,4 +69,18 @@
         </div>
         <!--end::Col-->
     </div>
+
+    @include('livewire.modals.accomplishment-modal')
 </div>
+
+@script
+<script>
+    $wire.on('show-accomplishmentModal', () => {
+        $('#accomplishmentModal').modal('show');
+    });
+
+    $wire.on('hide-accomplishmentModal', () => {
+        $('#accomplishmentModal').modal('hide');
+    });
+</script>
+@endscript

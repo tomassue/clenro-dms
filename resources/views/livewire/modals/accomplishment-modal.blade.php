@@ -7,25 +7,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" wire:click="clear"></button>
             </div>
             <div class="modal-body">
-                <form class="form" wire:submit="{{ $editMode ? 'updateCategory' : 'createCategory' }}">
+                <form class="form" wire:submit="{{ $editMode ? 'updateAccomplishment' : 'createAccomplishment' }}">
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Accomplishment Category</label>
-                        <select class="form-select" aria-label="Select example" wire:model="category_type_id">
+                        <select class="form-select" aria-label="Select example" wire:model="accomplishment_category_id">
                             <option>Open this select menu</option>
-                            @foreach($category_type_select as $item)
-                            <option class="text-capitalize" value="{{ $item->id }}">{{ $item->category_type_name }}</option>
+                            @foreach($accomplishment_category_select as $item)
+                            <option class="text-capitalize" value="{{ $item->id }}">{{ $item->accomplishment_category_name }}</option>
                             @endforeach
                         </select>
-                        @error('category_type_id')
+                        @error('accomplishment_category_id')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>
                         @enderror
                     </div>
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">Name</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="category_name" />
-                        @error('category_name')
+                        <label class="required fw-bold fs-6 mb-2">Date</label>
+                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date" />
+                        @error('date')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 mb-10">
+                        <label class="required fw-bold fs-6 mb-2">Details</label>
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="details" />
+                        @error('details')
+                        <div class="fv-plugins-message-container invalid-feedback">
+                            <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
+                        </div>
+                        @enderror
+                    </div>
+                    <div class="col-12 mb-10">
+                        <label class="required fw-bold fs-6 mb-2">No. of participants</label>
+                        <input type="number" class="form-control mb-3 mb-lg-0" wire:model="no_of_participants" />
+                        @error('no_of_participants')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
                         </div>

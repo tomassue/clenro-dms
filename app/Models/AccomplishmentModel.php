@@ -27,4 +27,14 @@ class AccomplishmentModel extends Model
             ->logOnly(['*'])
             ->logOnlyDirty();
     }
+
+    public function accomplishment_category()
+    {
+        return $this->belongsTo(AccomplishmentCategoryModel::class, 'accomplishment_category_id', 'id');
+    }
+
+    public function getFormattedDateAttribute()
+    {
+        return date('F j, Y', strtotime($this->date));
+    }
 }
