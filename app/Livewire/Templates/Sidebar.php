@@ -155,6 +155,22 @@ class Sidebar extends Component
                                         <span class="menu-title">Outgoing (Category)</span>
                                     </a>
                                 </div>
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'divisions' ? 'active' : '' }}" href="{{ route('divisions') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Divisions</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'accomplishment-category' ? 'active' : '' }}" href="{{ route('accomplishment-category') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">Accomplishment Category</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

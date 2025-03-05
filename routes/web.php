@@ -8,7 +8,9 @@ use App\Livewire\Dashboard;
 use App\Livewire\Incoming\Documents;
 use App\Livewire\Incoming\Requests;
 use App\Livewire\Outgoing;
+use App\Livewire\Settings\AccomplishmentCategory;
 use App\Livewire\Settings\Category;
+use App\Livewire\Settings\Divisions;
 use App\Livewire\Settings\IncomingDocumentCategory;
 use App\Livewire\Settings\IncomingRequestCategory;
 use App\Livewire\Settings\OutgoingCategory;
@@ -43,11 +45,13 @@ Route::middleware(['auth', 'default-password'])->group(function () {
     Route::get('accomplishments/', Accomplishments::class)->name('accomplishments');
 
     // Reference
+    //// Route::get('/reference/category', Category::class)->name('category');
     Route::get('/reference/user-management', UserManagement::class)->name('user-management');
-    Route::get('/reference/category', Category::class)->name('category');
     Route::get('/reference/incoming-request-category', IncomingRequestCategory::class)->name('incoming-request-category');
     Route::get('/reference/incoming-document-category', IncomingDocumentCategory::class)->name('incoming-document-category');
     Route::get('/references/outgoing-category', OutgoingCategory::class)->name('outgoing-category');
+    Route::get('/references/divisions', Divisions::class)->name('divisions');
+    Route::get('/references/accomplishment-category', AccomplishmentCategory::class)->name('accomplishment-category');
 });
 
 Route::middleware(['auth'])->group(function () {
