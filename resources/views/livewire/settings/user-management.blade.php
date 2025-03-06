@@ -22,9 +22,11 @@
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
+                        @can('create user')
                         <div class="col-sm-12 col-md-12 col-lg-2 text-end">
                             <button type="button" class="btn btn-primary" wire:click="$dispatch('show-userModal')">Add User</button>
                         </div>
+                        @endcan
                     </div>
                     <div class="mt-5">
                         <div class="table-responsive">
@@ -50,14 +52,64 @@
                                             <span class="badge {{ $item->deleted_at ? 'badge-light-danger' : 'badge-light-success' }}">{{ $item->deleted_at ? 'Inactive' : 'Active' }}</span>
                                         </td>
                                         <td>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readUser({{ $item->id }})">Edit</a>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-warning mb-2" wire:click="resetPassword({{ $item->id }})">Reset Password</a>
-                                            <a type="button" style="white-space: nowrap;" class="btn btn-sm {{ $item->deleted_at ? 'btn-info' : 'btn-danger' }} mb-2" wire:click="{{ $item->deleted_at ? 'restoreUser(' . $item->id . ')' : 'deleteUser(' . $item->id . ')' }}">{{ $item->deleted_at ? 'Activate' : 'Deactivate' }}</a>
+                                            <!--begin::Trigger-->
+                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
+                                                data-kt-menu-trigger="click"
+                                                data-kt-menu-placement="bottom-start">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <!--end::Trigger-->
+
+                                            <!--begin::Menu-->
+                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
+                                                data-kt-menu="true">
+                                                @can('update user')
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="readUser({{ $item->id }})">
+                                                        Edit
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                                @endcan
+
+                                                @can('read user permissions')
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="readUserPermissions({{ $item->id }})">
+                                                        Permissions
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                                @endcan
+
+                                                @can('update user')
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="resetPassword({{ $item->id }})">
+                                                        Reset Password
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                                @endcan
+
+                                                @can('delete user')
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="{{ $item->deleted_at ? 'restoreUser(' . $item->id . ')' : 'deleteUser(' . $item->id . ')' }}">
+                                                        {{ $item->deleted_at ? 'Activate' : 'Deactivate' }}
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                                @endcan
+                                            </div>
+                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td class="text-center" colspan="5">No records found.</td>
+                                        <td class=" text-center" colspan="5">No records found.
+                                        </td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -88,6 +140,14 @@
 
     $wire.on('hide-userModal', () => {
         $('#userModal').modal('hide');
+    });
+
+    $wire.on('show-userPermissionModal', () => {
+        $('#userPermissionModal').modal('show');
+    });
+
+    $wire.on('hide-userPermissionModal', () => {
+        $('#userPermissionModal').modal('hide');
     });
 </script>
 @endscript

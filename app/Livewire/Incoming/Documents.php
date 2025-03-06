@@ -40,6 +40,15 @@ class Documents extends Component
     public $preview_file_id = [];
     public $document_history = [];
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read incoming documents')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         $rules = [

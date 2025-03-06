@@ -19,6 +19,15 @@ class IncomingRequestCategory extends Component
     public $incoming_request_categories_id;
     public $incoming_request_category_name;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read references')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         return [

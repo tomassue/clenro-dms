@@ -19,6 +19,15 @@ class Divisions extends Component
     public $division_id;
     public $division_name;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read references')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         return [

@@ -40,9 +40,11 @@
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
+                        @can('create incoming requests')
                         <div class="col-sm-12 col-md-12 col-lg-2 text-end" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }}">
                             <button type="button" class="btn btn-primary" wire:click="$dispatch('show-incomingRequestModal')">Add Request</button>
                         </div>
+                        @endcan
                     </div>
                     <div class="mt-5">
                         <div class="table-responsive">
@@ -103,6 +105,7 @@
                                                 </div>
                                                 <!--end::Menu item-->
 
+                                                @can('update incoming requests')
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3" style="display: {{ $item->status->status_name == 'completed' ? 'none' : '' }};">
                                                     <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="readIncomingRequest({{ $item->id }})">
@@ -118,6 +121,7 @@
                                                     </a>
                                                 </div>
                                                 <!--end::Menu item-->
+                                                @endcan
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3">
@@ -203,7 +207,7 @@
                                 @endif 
                                 text-capitalize">
                                     {{ $item->status->status_name }}
-                                </span> ({{ $item->division->division_name }})
+                                </span> ({{ $item->division->division_name ?? '-' }})
                             </div>
                             <!--end::Text-->
                         </div>

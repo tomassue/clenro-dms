@@ -15,6 +15,7 @@ use App\Livewire\Settings\IncomingDocumentCategory;
 use App\Livewire\Settings\IncomingRequestCategory;
 use App\Livewire\Settings\OutgoingCategory;
 use App\Livewire\Settings\UserManagement;
+use App\Livewire\Settings\UserPermissions;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -52,6 +53,9 @@ Route::middleware(['auth', 'default-password'])->group(function () {
     Route::get('/references/outgoing-category', OutgoingCategory::class)->name('outgoing-category');
     Route::get('/references/divisions', Divisions::class)->name('divisions');
     Route::get('/references/accomplishment-category', AccomplishmentCategory::class)->name('accomplishment-category');
+
+    // Super-admin
+    Route::get('/reference/user-permissions', UserPermissions::class)->name('user-permissions');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -40,9 +40,11 @@
                         <div class="col-sm-12 col-md-12 col-lg-4">
                             <input type="search" wire:model.live="search" class="form-control" placeholder="Type a keyword..." aria-label="Type a keyword..." style="appearance: none; background-color: #fff; border: 1px solid #eff2f5; border-radius: 5px; font-size: 14px; line-height: 1.45; outline: 0; padding: 10px 13px;">
                         </div>
+                        @can('create outgoing')
                         <div class="col-sm-12 col-md-12 col-lg-2 text-end">
                             <button type="button" class="btn btn-primary" wire:click="$dispatch('show-outgoingModal')">Add Outgoing</button>
                         </div>
+                        @endcan
                     </div>
                     <div class="mt-5">
                         <div class="table-responsive">
@@ -106,7 +108,9 @@
                                             </span>
                                         </td>
                                         <td>
+                                            @can('update outgoing')
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-secondary me-2 mb-2" wire:click="readOutgoing({{ $item->id }})">Edit</a>
+                                            @endcan
                                             <a type="button" style="white-space: nowrap;" class="btn btn-sm btn-info mb-2" wire:click="readOutgoingHistory({{ $item->id }})">History</a>
                                         </td>
                                     </tr>

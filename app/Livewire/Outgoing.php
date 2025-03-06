@@ -45,6 +45,15 @@ class Outgoing extends Component
         $ppmp_code,
         $voucher_name;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read outgoing')) {
+            return abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         $commonRules = [

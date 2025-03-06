@@ -14,6 +14,15 @@ class Dashboard extends Component
 
     public $search;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read dashboard')) {
+            abort(403, message: 'Unauthorized');
+        }
+    }
+
     public function render()
     {
         return view('livewire.dashboard', [

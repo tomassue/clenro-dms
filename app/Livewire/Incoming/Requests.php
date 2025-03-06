@@ -45,6 +45,15 @@ class Requests extends Component
     public $preview_file_id = [];
     public $document_history = [];
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read incoming requests')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         $rules = [

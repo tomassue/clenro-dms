@@ -22,6 +22,15 @@ class Accomplishments extends Component
         $details,
         $no_of_participants;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read accomplishments')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         return [

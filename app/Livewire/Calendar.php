@@ -34,6 +34,15 @@ class Calendar extends Component
         $file_id,
         $status_id;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read calendar')) {
+            return abort(403, 'Unauthorized');
+        }
+    }
+
     public function clear()
     {
         $this->reset();

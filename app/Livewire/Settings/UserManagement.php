@@ -18,8 +18,22 @@ class UserManagement extends Component
 
     public $editMode = false;
     public $search;
-    public $name, $username, $division_id, $email;
-    public $user_id;
+    public $name,
+        $username,
+        $division_id,
+        $email,
+        $permissions = [];
+    public $user, // User object
+        $user_id; // User id
+
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read user management')) {
+            abort(403, 'Unauthorized');
+        }
+    }
 
     public function rules()
     {
@@ -175,6 +189,31 @@ class UserManagement extends Component
             $user->restore();
 
             $this->dispatch('success', message: 'User reactivated successfully.');
+        } catch (\Throwable $th) {
+            // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function readUserPermissions(User $user)
+    {
+        $this->user = $user;
+
+        $this->permissions = $user->getPermissionNames()->toArray();
+
+        $this->dispatch('show-userPermissionModal');
+    }
+
+    public function updateUserPermissions()
+    {
+        try {
+            DB::transaction(function () {
+                $this->user->syncPermissions($this->permissions);
+            });
+
+            $this->clear();
+            $this->dispatch('hide-userPermissionModal');
+            $this->dispatch('success', message: 'User permissions updated successfully.');
         } catch (\Throwable $th) {
             // throw $th;
             $this->dispatch('error');

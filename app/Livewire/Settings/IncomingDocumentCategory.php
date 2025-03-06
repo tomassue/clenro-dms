@@ -19,6 +19,15 @@ class IncomingDocumentCategory extends Component
     public $search;
     public $incoming_document_category_name;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read references')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         return [

@@ -19,6 +19,15 @@ class OutgoingCategory extends Component
     public $search;
     public $outgoing_category_name;
 
+    public function mount()
+    {
+        $user = auth()->user();
+
+        if (!$user->can('read references')) {
+            abort(403, 'Unauthorized');
+        }
+    }
+
     public function rules()
     {
         return [

@@ -21,6 +21,7 @@ class Sidebar extends Component
                 <div class="aside-nav d-flex flex-column align-lg-center flex-column-fluid w-100 pt-5 pt-lg-0" id="kt_aside_nav">
                     <!--begin::Primary menu-->
                     <div id="kt_aside_menu" class="menu menu-column menu-title-gray-600 menu-state-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500 fw-bold fs-6" data-kt-menu="true">
+                        @can('read dashboard')
                         <div class="menu-item py-3">
                             <a class="menu-link {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }} menu-center" href="{{ route('dashboard') }}" title="Dashboard" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -32,6 +33,7 @@ class Sidebar extends Component
                                 </span>
                             </a>
                         </div>
+                        @endcan
                         <div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
                             <span class="menu-link menu-center" title="Incoming" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -50,6 +52,7 @@ class Sidebar extends Component
                                         <span class="menu-section fs-5 fw-bolder ps-1 py-1">Incoming</span>
                                     </div>
                                 </div>
+                                @can('read incoming requests')
                                 <div class="menu-item">
                                     <a class="menu-link {{ Route::currentRouteName() == 'incoming.requests' ? 'active' : '' }}" href="{{ route('incoming.requests') }}">
                                         <span class="menu-bullet">
@@ -58,6 +61,8 @@ class Sidebar extends Component
                                         <span class="menu-title">Requests</span>
                                     </a>
                                 </div>
+                                @endcan
+                                @can('read incoming documents')
                                 <div class="menu-item">
                                     <a class="menu-link {{ Route::currentRouteName() == 'incoming.documents' ? 'active' : '' }}" href="{{ route('incoming.documents') }}">
                                         <span class="menu-bullet">
@@ -66,8 +71,10 @@ class Sidebar extends Component
                                         <span class="menu-title">Documents</span>
                                     </a>
                                 </div>
+                                @endcan
                             </div>
                         </div>
+                        @can('read outgoing')
                         <div class="menu-item py-3">
                             <a class="menu-link menu-center" href="{{ route('outgoing') }}" title="Outgoing" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -81,6 +88,8 @@ class Sidebar extends Component
                                 </span>
                             </a>
                         </div>
+                        @endcan
+                        @can('read calendar')
                         <div class="menu-item py-3">
                             <a class="menu-link menu-center" href="{{ route('calendar') }}" title="Calendar" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -94,6 +103,8 @@ class Sidebar extends Component
                                 </span>
                             </a>
                         </div>
+                        @endcan
+                        @can('read accomplishments')
                         <div class="menu-item py-3">
                             <a class="menu-link menu-center" href="{{ route('accomplishments') }}" title="Accomplishments" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -106,6 +117,8 @@ class Sidebar extends Component
                                 </span>
                             </a>
                         </div>
+                        @endcan
+                        @can('read references')
                         <div data-kt-menu-trigger="click" data-kt-menu-placement="right-start" class="menu-item py-3">
                             <span class="menu-link menu-center" title="References" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
                                 <span class="menu-icon me-0">
@@ -123,6 +136,17 @@ class Sidebar extends Component
                                         <span class="menu-section fs-5 fw-bolder ps-1 py-1">References</span>
                                     </div>
                                 </div>
+                                @can('read permissions')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'user-permissions' ? 'active' : '' }}" href="{{ route('user-permissions') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title">User Permissions</span>
+                                    </a>
+                                </div>
+                                @endcan
+                                @can('read user management')
                                 <div class="menu-item">
                                     <a class="menu-link {{ Route::currentRouteName() == 'user-management' ? 'active' : '' }}" href="{{ route('user-management') }}">
                                         <span class="menu-bullet">
@@ -131,6 +155,7 @@ class Sidebar extends Component
                                         <span class="menu-title">User Management</span>
                                     </a>
                                 </div>
+                                @endcan
                                 <div class="menu-item">
                                     <a class="menu-link {{ Route::currentRouteName() == 'incoming-request-category' ? 'active' : '' }}" href="{{ route('incoming-request-category') }}">
                                         <span class="menu-bullet">
@@ -173,6 +198,7 @@ class Sidebar extends Component
                                 </div>
                             </div>
                         </div>
+                        @endcan
                     </div>
                     <!--end::Primary menu-->
                 </div>
