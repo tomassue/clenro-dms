@@ -48,13 +48,15 @@ class ChangePassword extends Component
             $this->clear();
 
             // Log out the user
-            Auth::logout();
+            // Auth::logout();
 
             // Optionally, you can invalidate the session and regenerate the CSRF token
-            session()->invalidate();
-            session()->regenerateToken();
+            // session()->invalidate();
+            // session()->regenerateToken();
 
-            $this->dispatch('success', message: 'Password updated successfully.');
+            // $this->dispatch('success', message: 'Password updated successfully.');
+
+            return redirect()->route('dashboard');
         } catch (\Throwable $th) {
             //throw $th;
             $this->dispatch('error');

@@ -12,7 +12,7 @@ class Dashboard extends Component
 {
     use WithPagination;
 
-    public $search;
+    // public $search;
 
     public function mount()
     {
@@ -38,7 +38,7 @@ class Dashboard extends Component
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
             $query->where('forwarded_to_division_id', $user_division_id);
         })
             ->count();
@@ -49,7 +49,7 @@ class Dashboard extends Component
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
             $query->where('forwarded_to_division_id', $user_division_id);
         })
             ->where('status_id', '1') // Pending
@@ -61,7 +61,7 @@ class Dashboard extends Component
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
             $query->where('forwarded_to_division_id', $user_division_id);
         })
             ->where('status_id', '4') // Completed
@@ -74,10 +74,10 @@ class Dashboard extends Component
         $user_division_id = $user->division_id;
 
         return IncomingRequestModel::query()
-            ->when($this->search, function ($query) {
-                $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
-            })
-            ->when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            // ->when($this->search, function ($query) {
+            //     $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
+            // })
+            ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
                 $query->where('forwarded_to_division_id', $user_division_id);
             })
             ->where('status_id', '1')

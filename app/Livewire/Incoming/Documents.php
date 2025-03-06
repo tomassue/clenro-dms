@@ -107,7 +107,7 @@ class Documents extends Component
             ->when($this->filter_status, function ($query) {
                 $query->where('status_id', 'like', '%' . $this->filter_status . '%');
             })
-            ->when(!is_null($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
+            ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
                 $query->where('forwarded_to_division_id', $user_division_id);
             })
             ->orderBy('created_at', 'desc')
