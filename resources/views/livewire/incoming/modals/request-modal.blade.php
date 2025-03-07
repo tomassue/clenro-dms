@@ -92,7 +92,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Contact Number</label>
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="contact_person_number" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
+                        <input type="text" class="form-control mb-3 mb-lg-0" maxlength="11" oninput="this.value = '09' + this.value.slice(2).replace(/\D/g, '');" placeholder="09XXXXXXXXX" wire:model="contact_person_number" {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'disabled' : '' }} />
                         @error('contact_person_number')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -111,7 +111,7 @@
                     </div>
 
                     <div class="col-12 mb-10" style="display: {{ auth()->user()->division_id != 1 || empty(auth()->user()->division_id) ? '' : 'none' }};">
-                        <label class="required fw-bold fs-6 mb-2">Remarks</label>
+                        <label class="fw-bold fs-6 mb-2">Remarks</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="remarks" />
                         @error('remarks')
                         <div class="fv-plugins-message-container invalid-feedback">

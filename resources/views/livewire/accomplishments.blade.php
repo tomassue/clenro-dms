@@ -48,9 +48,39 @@
                                         <td>{{ $item->details }}</td>
                                         <td>{{ $item->no_of_participants }}</td>
                                         <td>
-                                            @can('update accomplishments')
-                                            <button class="btn btn-secondary btn-sm" wire:click="readAccomplishment({{ $item->id }})">Edit</button>
-                                            @endcan
+
+
+                                            <!--begin::Trigger-->
+                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
+                                                data-kt-menu-trigger="click"
+                                                data-kt-menu-placement="bottom-start">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <!--end::Trigger-->
+
+                                            <!--begin::Menu-->
+                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
+                                                data-kt-menu="true">
+
+                                                @can('update accomplishments')
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="readAccomplishment({{ $item->id }})">
+                                                        Edit
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                                @endcan
+
+                                                <!--begin::Menu item-->
+                                                <div class="menu-item px-3">
+                                                    <a href="#" class="menu-link px-3" wire:click="readOutgoingHistory({{ $item->id }})">
+                                                        History
+                                                    </a>
+                                                </div>
+                                                <!--end::Menu item-->
+                                            </div>
+                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty
@@ -85,6 +115,53 @@
 
     $wire.on('hide-accomplishmentModal', () => {
         $('#accomplishmentModal').modal('hide');
+    });
+
+    $wire.on('show-accomplishmentHistoryModal', () => {
+        $('#accomplishmentHistoryModal').modal('show');
+    });
+
+    $wire.on('hide-accomplishmentHistoryModal', () => {
+        $('#accomplishmentHistoryModal').modal('hide');
+    });
+
+    /* -------------------------------------------------------------------------- */
+
+    $wire.on('read-file', (url) => {
+        window.open(event.detail.url, '_blank'); // Open the signed URL in a new tab
+    });
+
+    /* -------------------------------------------------------------------------- */
+
+    // Register the plugin 
+    FilePond.registerPlugin(FilePondPluginFileValidateType); // for file type validation
+    FilePond.registerPlugin(FilePondPluginFileValidateSize); // for file size validation
+    FilePond.registerPlugin(FilePondPluginImagePreview); // for image preview
+
+    // Turn input element into a pond with configuration options
+    $('.files').filepond({
+        // required: true,
+        allowFileTypeValidation: true,
+        acceptedFileTypes: ['image/jpg', 'image/png', 'application/pdf'],
+        labelFileTypeNotAllowed: 'File of invalid type',
+        allowFileSizeValidation: true,
+        maxFileSize: '10MB',
+        labelMaxFileSizeExceeded: 'File is too large',
+        server: {
+            // This will assign the data to the files[] property.
+            process: (fieldName, file, metadata, load, error, progress, abort) => {
+                @this.upload('file_id', file, load, error, progress);
+            },
+            revert: (uniqueFileId, load, error) => {
+                @this.removeUpload('file_id', uniqueFileId, load, error);
+            }
+        }
+    });
+
+    $wire.on('reset-files', () => {
+        $('.files').each(function() {
+            $(this).filepond('removeFiles');
+        });
     });
 </script>
 @endscript

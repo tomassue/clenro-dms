@@ -62,7 +62,7 @@ class Requests extends Component
             'category_id' => 'required',
             'date_and_time' => 'required',
             'contact_person_name' => 'required',
-            'contact_person_number' => 'required',
+            'contact_person_number' => 'required|size:11',
             'description' => 'required'
         ];
 
