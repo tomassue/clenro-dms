@@ -188,7 +188,7 @@
                             <!--end::Badge-->
                             <!--begin::Text-->
                             <div class="fw-mormal timeline-content text-muted ps-3">
-                                <div class="col-12 text-truncate">
+                                <div class="col-6 text-truncate" title="{{ $item->info }}">
                                     {{ $item->info }}
                                 </div>
                                 <span class="badge 
