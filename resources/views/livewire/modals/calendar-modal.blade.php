@@ -37,7 +37,10 @@
                             </span>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-4 fw-bold">Forwarded to:</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->division->division_name ?? '-' }}</div>
+                    </div>
                     <div class="row">
                         <div class="col-4 fw-bold">No.:</div>
                         <div class="col-8">{{ $incoming_request_calendar_id->incoming_request_no ?? '-' }}</div>
@@ -51,32 +54,12 @@
                         <div class="col-8">{{ $incoming_request_calendar_id->formatted_date_requested ?? '-' }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-4 fw-bold">Date returned:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->formatted_date_returned ?? '-' }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 fw-bold">Date returned (Actual):</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->formatted_actual_returned_date ?? '-' }}</div>
-                    </div>
-                    <div class="row">
                         <div class="col-4 fw-bold">Category:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->category->category_name ?? '-' }}</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->category->incoming_request_category_name ?? '-' }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-4 fw-bold">Sub-category:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->sub_category->sub_category_name ?? '-' }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 fw-bold">Venue:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->venue->venue_id ?? '-' }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 fw-bold">Time started:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->time_started ?? '-' }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 fw-bold">Time ended:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->time_ended ?? '-' }}</div>
+                        <div class="col-4 fw-bold">Date and Time:</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->date_and_time ?? '-' }}</div>
                     </div>
                     <div class="row">
                         <div class="col-4 fw-bold">Contact person name:</div>
@@ -85,6 +68,14 @@
                     <div class="row">
                         <div class="col-4 fw-bold">Contact person number:</div>
                         <div class="col-8">{{ $incoming_request_calendar_id->contact_person_number ?? '-' }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 fw-bold">Description:</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->description ?? '-' }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 fw-bold">Remarks:</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->remarks ?? '-' }}</div>
                     </div>
                 </div>
 

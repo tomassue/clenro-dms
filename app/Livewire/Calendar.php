@@ -68,50 +68,28 @@ class Calendar extends Component
 
     public function loadIncomingRequestCalendar()
     {
-        return IncomingRequestModel::with(['status', 'venue'])
+        return IncomingRequestModel::with(['status'])
             ->when($this->filter_status, function ($query) {
                 $query->where('status_id', $this->filter_status);
             })
             ->get()
             ->map(function ($item) {
-                $backgroundColor = '#E4A11B'; // Default color
-                $borderColor = '#E4A11B';
-
-                switch ($item->status->status_name) {
-                    case 'pending':
-                        $backgroundColor = '#f1416c'; // Red
-                        $borderColor = '#f1416c'; // Red
-                        break;
-                    case 'processed':
-                        $backgroundColor = '#7239ea'; // Purple
-                        $borderColor = '#7239ea'; // Purple
-                        break;
-                    case 'forwarded':
-                        $backgroundColor = '#ffc700'; // Yellow
-                        $borderColor = '#ffc700'; // Yellow
-                        break;
-                    case 'completed':
-                        $backgroundColor = '#00d9d9'; // Neon Blue
-                        $borderColor = '#00d9d9'; // Neon Blue
-                        break;
-                    case 'cancelled':
-                        $backgroundColor = '#181c32'; // Black
-                        $borderColor = '#181c32'; // Black
-                        break;
-                    default:
-                        $backgroundColor = '#E4A11B';
-                        $borderColor = '#E4A11B';
-                        break;
-                }
+                $colors = [
+                    'pending'    => '#f1416c', // Red
+                    'processed'  => '#7239ea', // Purple
+                    'forwarded'  => '#ffc700', // Yellow
+                    'completed'  => '#00d9d9', // Neon Blue
+                    'cancelled'  => '#181c32', // Black
+                ];
 
                 return [
                     'id'              => $item->id,
-                    'title'           => $item->office_or_barangay_or_organization_name . ' | ' . strtoupper($item->venue->venue_name),
-                    'start'           => $item->date_requested . 'T' . $item->time_started,
-                    'end'             => $item->date_returned . 'T' . $item->time_ended,
+                    'title'           => $item->office_or_barangay_or_organization_name,
+                    'start'           => $item->date_and_time,
+                    'end'             => $item->date_and_time,
                     'allDay'          => false,
-                    'backgroundColor' => $backgroundColor,
-                    'borderColor'     => $borderColor
+                    'backgroundColor' => $colors[$item->status->status_name] ?? '#E4A11B',
+                    'borderColor'     => $colors[$item->status->status_name] ?? '#E4A11B',
                 ];
             });
     }

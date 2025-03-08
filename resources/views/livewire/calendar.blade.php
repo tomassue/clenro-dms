@@ -83,12 +83,18 @@
             selectable: true,
             events: @json($incoming_request_calendar),
 
-            // Customize the time display format to show both start and end times
-            eventTimeFormat: {
-                hour: 'numeric',
-                minute: '2-digit',
-                meridiem: 'short'
+            views: {
+                dayGridMonth: {
+                    displayEventTime: false // Hides the time in Month View, allowing colors to apply
+                }
             },
+
+            eventDidMount: function(info) {
+                info.el.style.backgroundColor = info.event.backgroundColor;
+                info.el.style.borderColor = info.event.borderColor;
+                info.el.style.color = 'white'; // Ensures text is visible
+            },
+
 
             eventContent: function(arg) {
                 let startTime = FullCalendar.formatDate(arg.event.start, {
