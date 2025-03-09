@@ -40,6 +40,8 @@
     <link href="{{ asset('plugins/jquery-filepond-master/filepond.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('plugins/jquery-filepond-master/filepond-plugin-image-preview.css') }}">
     <link href="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('plugins/virtual-select/virtual-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/virtual-select/tooltip.min.css') }}">
     <!-- end::Plugins -->
 
     <style>
@@ -172,6 +174,13 @@
         }
 
         /* end::disable anchor */
+
+        /* begin::custom virtual select */
+        .vscomp-wrapper {
+            height: 45px;
+        }
+
+        /* end::customem virtual select */
     </style>
 </head>
 
@@ -210,14 +219,14 @@
 
     <!-- begin::Plugins -->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-
     <script src="{{ asset('plugins/jquery-filepond-master/filepond.min.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond-plugin-file-validate-type.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond-plugin-file-validate-size.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond-plugin-image-preview.js') }}"></script>
     <script src="{{ asset('plugins/jquery-filepond-master/filepond.jquery.js') }}"></script>
-
     <script src="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
+    <script src="{{ asset('plugins/virtual-select/virtual-select.min.js') }}"></script>
+    <script src="{{ asset('plugins/virtual-select/tooltip.min.js') }}"></script>
     <!-- end::Plugins -->
 </body>
 

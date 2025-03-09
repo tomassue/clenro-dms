@@ -35,8 +35,8 @@ class Documents extends Component
         $status_id,
         $forwarded_to_division_id,
         $remarks;
-    public $division_id, //* Forwarded to division id
-        $division_name;
+    // public $division_id, //* Forwarded to division id
+    //     $division_name;
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -99,16 +99,34 @@ class Documents extends Component
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
+        // return IncomingDocumentModel::query()
+        //     ->when($this->search, function ($query) {
+        //         $query->where('category_id', 'like', '%' . $this->search . '%')
+        //             ->orWhere('info', 'like', '%' . $this->search . '%');
+        //     })
+        //     ->when($this->filter_status, function ($query) {
+        //         $query->where('status_id', 'like', '%' . $this->filter_status . '%');
+        //     })
+        //     ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
+        //         $query->where('forwarded_to_division_id', $user_division_id);
+        //     })
+        //     ->orderBy('created_at', 'desc')
+        //     ->paginate(10);
+
+        //* We will remove the forwarded_division_id and create a table tbl_forwarded_incoming_documents to better track division's interaction to the forwarded document. The backed-up database 3-9-2025 works well with the commented query
+
         return IncomingDocumentModel::query()
             ->when($this->search, function ($query) {
-                $query->where('category_id', 'like', '%' . $this->search . '%')
-                    ->orWhere('info', 'like', '%' . $this->search . '%');
+                $query->where('category_id', 'like', "{$this->search}")
+                    ->orWhere('info', 'like', "{$this->search}");
             })
             ->when($this->filter_status, function ($query) {
-                $query->where('status_id', 'like', '%' . $this->filter_status . '%');
+                $query->where('status_id', 'like', "{$this->filter_status}");
             })
             ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-                $query->where('forwarded_to_division_id', $user_division_id);
+                $query->whereHas('forwardedDivisions', function ($subQuery) use ($user_division_id) {
+                    $subQuery->where('division_id', $user_division_id);
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -116,12 +134,13 @@ class Documents extends Component
 
     public function loadRecentForwardedIncomingDocuments()
     {
-        return IncomingDocumentModel::query()
-            ->with('division')
-            ->orderBy('created_at', 'desc')
-            ->whereNotNull('forwarded_to_division_id')
-            ->take(5)
-            ->get();
+        //TODO: Apply changes
+        // return IncomingDocumentModel::query()
+        //     ->with('division')
+        //     ->orderBy('created_at', 'desc')
+        //     ->whereNotNull('forwarded_to_division_id')
+        //     ->take(5)
+        //     ->get();
     }
 
     public function loadStatusSelect()
@@ -175,7 +194,7 @@ class Documents extends Component
             $this->dispatch('hide-incomingDocumentModal');
             $this->dispatch('success', message: 'Incoming document created successfully.');
         } catch (\Throwable $th) {
-            throw $th;
+            // throw $th;
             $this->dispatch('error');
         }
     }
@@ -358,28 +377,34 @@ class Documents extends Component
         }
     }
 
-    public function forwardToDivision()
+    public function forwardToDivision($incoming_document_id)
     {
-        $this->validate([
-            'division_id' => 'required'
-        ], [], [
-            'division_id' => 'division'
-        ]);
-
-        try {
-            DB::transaction(function () {
-                $incoming_request = IncomingDocumentModel::findOrFail($this->incoming_document_id);
-                $incoming_request->forwarded_to_division_id = $this->division_id;
-                $incoming_request->status_id = '8'; // FORWARDED
-                $incoming_request->save();
-            });
-
-            $this->clear();
-            $this->dispatch('hide-forwardToDivisionModal');
-            $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
-        } catch (\Throwable $th) {
-            // throw $th;
-            $this->dispatch('error');
-        }
+        // We dispatch an event to trigger the modal and with a parameter which is the id of the incoming document. The child component which is the forwarded-to-division-modal will listen to the event together with the parameter.
+        $this->dispatch('show-forwardToDivisionModal', incoming_document_id: $incoming_document_id);
     }
+
+    // public function forwardToDivision()
+    // {
+    //     $this->validate([
+    //         'division_id' => 'required'
+    //     ], [], [
+    //         'division_id' => 'division'
+    //     ]);
+
+    //     try {
+    //         DB::transaction(function () {
+    //             $incoming_request = IncomingDocumentModel::findOrFail($this->incoming_document_id);
+    //             $incoming_request->forwarded_to_division_id = $this->division_id;
+    //             $incoming_request->status_id = '8'; // FORWARDED
+    //             $incoming_request->save();
+    //         });
+
+    //         $this->clear();
+    //         $this->dispatch('hide-forwardToDivisionModal');
+    //         $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
+    //     } catch (\Throwable $th) {
+    //         // throw $th;
+    //         $this->dispatch('error');
+    //     }
+    // }
 }

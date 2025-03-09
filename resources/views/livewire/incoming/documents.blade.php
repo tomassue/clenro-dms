@@ -112,7 +112,8 @@
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }};">
-                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                        wire:click="forwardToDivision({{ $item->id }})">
                                                         Forward
                                                     </a>
                                                 </div>
@@ -161,58 +162,7 @@
                 <div class="card-body">
                     <!-- begin::Items -->
                     <div class="timeline-label">
-                        @foreach ($recent_forwarded_incoming_documents as $item)
-                        <!--begin::Item-->
-                        <div class="timeline-item">
-                            <!--begin::Label-->
-                            <div class="timeline-label fw-bolder text-gray-800 fs-9">
-                                {{ $item->updated_at->diffForHumans() }}
-                            </div>
-                            <!--end::Label-->
-                            <!--begin::Badge-->
-                            <div class="timeline-badge">
-                                <i class="fa fa-genderless
-                                @if($item->status->status_name == 'pending')
-                                text-danger
-                                @elseif($item->status->status_name == 'processed')
-                                text-primary
-                                @elseif($item->status->status_name == 'forwarded')
-                                text-warning
-                                @elseif($item->status->status_name == 'completed')
-                                text-success
-                                @elseif($item->status->status_name == 'cancelled')
-                                text-dark
-                                @endif
-                                fs-1"></i>
-                            </div>
-                            <!--end::Badge-->
-                            <!--begin::Text-->
-                            <div class="fw-mormal timeline-content text-muted ps-3">
-                                <div class="col-6 text-truncate" title="{{ $item->info }}">
-                                    {{ $item->info }}
-                                </div>
-                                <span class="badge 
-                                @if($item->status->status_name == 'pending')
-                                badge-light-danger
-                                @elseif($item->status->status_name == 'processed')
-                                badge-light-primary
-                                @elseif($item->status->status_name == 'forwarded')
-                                badge-light-warning
-                                @elseif($item->status->status_name == 'completed')
-                                badge-light-success
-                                @elseif($item->status->status_name == 'cancelled')
-                                badge-light-dark
-                                @else
-                                badge-secondary
-                                @endif 
-                                text-capitalize">
-                                    {{ $item->status->status_name }}
-                                </span> ({{ $item->division->division_name }})
-                            </div>
-                            <!--end::Text-->
-                        </div>
-                        <!--end::Item-->
-                        @endforeach
+
                     </div>
                     <!-- end::Items -->
                 </div>
@@ -226,7 +176,7 @@
 
     @include('livewire.modals.document-history-modal')
 
-    @include('livewire.incoming.modals.forward-to-division-modal')
+    <livewire:components.forward-to-division-modal page="incoming documents" />
 </div>
 
 @script
@@ -243,9 +193,9 @@
         $('#documentHistoryModal').modal('show');
     });
 
-    $wire.on('show-forwardToDivisionModal', (id) => {
-        $wire.incoming_document_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
-        $wire.checkForwardedToDivision(id.id);
+    $wire.on('show-forwardToDivisionModal', () => {
+        // $wire.incoming_document_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
+        // $wire.checkForwardedToDivision(id.id);
         $('#forwardToDivisionModal').modal('show');
     });
 

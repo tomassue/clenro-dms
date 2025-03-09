@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('status_id'); // foreign_key
             $table->text('remarks')->nullable();
-            $table->string('forwarded_to_division_id')->nullable();
+            // $table->string('forwarded_to_division_id')->nullable(); //* Removed. Created a separate table for this.
             $table->timestamps();
             $table->softDeletes();
         });
