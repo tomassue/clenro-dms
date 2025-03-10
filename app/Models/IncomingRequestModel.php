@@ -32,7 +32,7 @@ class IncomingRequestModel extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('incoming_request')
+            ->useLogName('incoming request')
             ->logOnly(['*'])
             ->logOnlyDirty();
     }

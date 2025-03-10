@@ -25,7 +25,7 @@ class IncomingDocumentModel extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->useLogName('incoming_document')
+            ->useLogName('incoming document')
             ->logOnly(['*'])
             ->logOnlyDirty();
     }
@@ -40,10 +40,10 @@ class IncomingDocumentModel extends Model
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
-    public function division()
-    {
-        return $this->belongsTo(DivisionModel::class, 'forwarded_to_division_id', 'id');
-    }
+    // public function division()
+    // {
+    //     return $this->belongsTo(DivisionModel::class, 'forwarded_to_division_id', 'id');
+    // }
 
     public function forwardedDivisions()
     {

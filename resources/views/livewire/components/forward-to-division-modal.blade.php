@@ -9,7 +9,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form" wire:submit="forwardToDivision">
-                        {{ $incoming_document_id ?? '-' }}
+                        @dump($incoming_document_id)
                         <div class="col-12 mb-10">
                             <label class="required fw-bold fs-6 mb-2">Division</label>
                             <div wire:ignore>

@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Incoming;
 
+use App\Livewire\Components\ForwardToDivisionModal;
 use App\Models\CategoryModel;
 use App\Models\DivisionModel;
 use App\Models\FilesModel;
+use App\Models\ForwardedIncomingDocumentsModel;
 use App\Models\IncomingDocumentCategoryModel;
 use App\Models\IncomingDocumentModel;
 use App\Models\IncomingRequestCategoryModel;
@@ -13,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -80,6 +83,12 @@ class Documents extends Component
         $this->dispatch('reset-files');
     }
 
+    #[On('refresh-incoming-documents')]
+    public function refreshIncomingDocuments()
+    {
+        $this->loadIncomingDocuments();
+    }
+
     public function render()
     {
         return view(
@@ -134,13 +143,11 @@ class Documents extends Component
 
     public function loadRecentForwardedIncomingDocuments()
     {
-        //TODO: Apply changes
-        // return IncomingDocumentModel::query()
-        //     ->with('division')
-        //     ->orderBy('created_at', 'desc')
-        //     ->whereNotNull('forwarded_to_division_id')
-        //     ->take(5)
-        //     ->get();
+        return IncomingDocumentModel::query()
+            ->with('forwardedDivisions.division') // Load division along with forwardedDivisions
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
     }
 
     public function loadStatusSelect()
@@ -208,10 +215,23 @@ class Documents extends Component
 
             $incoming_document = IncomingDocumentModel::withTrashed()->findOrFail($incoming_document_id);
 
+            //* 1. Everytime users other than the superadmin and the admin, if they open the document, it will be marked as opened
             if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_document->status->status_name == 'forwarded') {
-                $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
-                $incoming_document->status_id = '15'; // Received
-                $incoming_document->save();
+                // $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
+                // $incoming_document->status_id = '15'; // Received
+                // $incoming_document->save();
+
+                //* 2. Then we check if all incoming documents are opened, we will update the status to received.
+                $this->checkIncomingDocumentIfAllOpened($incoming_document_id);
+
+                $forwarded_incoming_document = ForwardedIncomingDocumentsModel::where('incoming_document_id', $incoming_document_id)
+                    ->where('division_id', Auth::user()->division_id)
+                    ->first();
+
+                if ($forwarded_incoming_document) {
+                    $forwarded_incoming_document->is_opened = true; // Received
+                    $forwarded_incoming_document->save();
+                }
             }
 
             $this->fill(
@@ -236,6 +256,26 @@ class Documents extends Component
             $this->dispatch('show-incomingDocumentModal');
         } catch (\Throwable $th) {
             // throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    private function checkIncomingDocumentIfAllOpened($incoming_document_id)
+    {
+        try {
+            $totalForwarded = ForwardedIncomingDocumentsModel::where('incoming_document_id', $incoming_document_id)->count();
+
+            $totalOpened = ForwardedIncomingDocumentsModel::where('incoming_document_id', $incoming_document_id)
+                ->where('is_opened', true)
+                ->count();
+
+            if ($totalForwarded == $totalOpened) {
+                $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
+                $incoming_document->status_id = '15'; // Received
+                $incoming_document->save();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
             $this->dispatch('error');
         }
     }
@@ -310,23 +350,42 @@ class Documents extends Component
             $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
             $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
 
-            $this->document_history = Activity::where('subject_type', IncomingDocumentModel::class)
+            $this->document_history = Activity::whereIn('subject_type', [IncomingDocumentModel::class, ForwardedIncomingDocumentsModel::class])
+                ->whereIn('log_name', ['incoming document', 'forwarded incoming document'])
                 ->where('subject_id', $incoming_document_id)
-                ->where('log_name', 'incoming_document')
-                ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
+
+                /**
+                 ** Here, I want to exclude created forwarded incoming document.
+                 ** I can't directly use ->where('log_name', 'forwarded incoming document')->whereNot('event', 'created') because it it would only filter forwarded incoming document logs and completely exclude incoming document logs.
+                 ** So, we need to include all incoming document and include forwarded incoming document logs, but exclude created forwarded incoming document logs.
+                 */
+                ->where(function ($query) {
+                    $query->where('log_name', '!=', 'forwarded incoming document')
+                        ->orWhere(function ($subQuery) {
+                            $subQuery->where('log_name', 'forwarded incoming document')
+                                ->whereNot('event', 'created');
+                        });
+                })
+                ->where(function ($query) {
+                    $query->whereNotNull('properties->attributes->status_id')
+                        ->orWhereNotNull('properties->attributes->is_opened'); //* Show only records with either status_id OR is_opened
+                })
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($item) use ($statusMap, $divisionMap) {
-                    $oldStatusId = $item->properties['old']['status_id'] ?? null;
+                    $attributes = $item->properties['attributes'] ?? [];
+                    // $oldStatusId = $item->properties['old']['status_id'] ?? null;
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
                     $division = $item->properties['attributes']['forwarded_to_division_id'] ?? null;
 
                     return [
                         // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
                         'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
-                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : (isset($attributes['is_opened']) ? ((bool) $attributes['is_opened'] ? 'Opened' : '-') : '-'), //* UPDATED attributes
                         'forwarded_to_division' => $divisionMap[$division] ?? 'N/A',
-                        'updated_by' => $item->causer ? $item->causer->name : 'System'
+                        'updated_by' => $item->causer ? $item->causer->name : 'System',
+                        'subject_type' => $item->subject_type,
+                        'is_opened' => isset($attributes['is_opened']) ? (bool) $attributes['is_opened'] : '-'
                     ];
                 });
 

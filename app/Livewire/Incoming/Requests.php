@@ -380,7 +380,7 @@ class Requests extends Component
 
             $this->document_history = Activity::where('subject_type', IncomingRequestModel::class)
                 ->where('subject_id', $incoming_request_id)
-                ->where('log_name', 'incoming_request')
+                ->where('log_name', 'incoming request')
                 ->whereNotNull('properties->attributes->status_id') //* View logs with changes in status_id ONLY
                 ->orderBy('created_at', 'desc')
                 ->get()

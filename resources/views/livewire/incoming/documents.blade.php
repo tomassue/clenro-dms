@@ -162,7 +162,57 @@
                 <div class="card-body">
                     <!-- begin::Items -->
                     <div class="timeline-label">
-
+                        @foreach ($recent_forwarded_incoming_documents as $item)
+                        <!--begin::Item-->
+                        <div class="timeline-item">
+                            <!--begin::Label-->
+                            <div class="timeline-label fw-bolder text-gray-800 fs-9">
+                                {{ $item->updated_at->diffForHumans() }}
+                            </div>
+                            <!--end::Label-->
+                            <!--begin::Badge-->
+                            <div class="timeline-badge">
+                                <i class="fa fa-genderless
+                                @if($item->status->status_name == 'pending')
+                                text-danger
+                                @elseif($item->status->status_name == 'processed')
+                                text-primary
+                                @elseif($item->status->status_name == 'forwarded')
+                                text-warning
+                                @elseif($item->status->status_name == 'completed')
+                                text-success
+                                @elseif($item->status->status_name == 'cancelled')
+                                text-dark
+                                @endif
+                                fs-1"></i>
+                            </div>
+                            <!--end::Badge-->
+                            <!--begin::Text-->
+                            <div class="fw-mormal timeline-content text-muted ps-3">
+                                {{ $item->info }} &nbsp;
+                                <span class="badge 
+                                @if($item->status->status_name == 'pending')
+                                badge-light-danger
+                                @elseif($item->status->status_name == 'processed')
+                                badge-light-primary
+                                @elseif($item->status->status_name == 'forwarded')
+                                badge-light-warning
+                                @elseif($item->status->status_name == 'completed')
+                                badge-light-success
+                                @else
+                                badge-light-dark
+                                @endif 
+                                text-capitalize">
+                                    {{ $item->status->status_name }} &nbsp;
+                                </span>
+                                @foreach ($item->forwardedDivisions as $forwarded)
+                                ({{ $forwarded->division->division_name ?? '-' }})
+                                @endforeach
+                            </div>
+                            <!--end::Text-->
+                        </div>
+                        <!--end::Item-->
+                        @endforeach
                     </div>
                     <!-- end::Items -->
                 </div>
