@@ -77,9 +77,9 @@ class IncomingRequestModel extends Model
         return $this->belongsTo(StatusModel::class, 'status_id', 'id');
     }
 
-    public function division()
+    public function forwardedDivisions()
     {
-        return $this->belongsTo(DivisionModel::class, 'forwarded_to_division_id', 'id');
+        return $this->hasMany(ForwardedIncomingRequestModel::class, 'incoming_request_id');
     }
 
     /**
@@ -101,28 +101,4 @@ class IncomingRequestModel extends Model
     {
         return Carbon::parse($this->date_and_time)->format('M d, Y h:i A');
     }
-
-    // /**
-    //  * Accessor for formatted date_returned.
-    //  *
-    //  * @return string
-    //  */
-    // public function getFormattedDateReturnedAttribute()
-    // {
-    //     return $this->date_returned
-    //         ? Carbon::parse($this->date_returned)->format('M d, Y')
-    //         : null; // Handle null values
-    // }
-
-    // /**
-    //  * Accessor for formatted actual_returned_date.
-    //  *
-    //  * @return string
-    //  */
-    // public function getFormattedActualReturnedDateAttribute()
-    // {
-    //     return $this->actual_returned_date
-    //         ? Carbon::parse($this->actual_returned_date)->format('M d, Y')
-    //         : null;
-    // }
 }

@@ -38,8 +38,6 @@ class Documents extends Component
         $status_id,
         $forwarded_to_division_id,
         $remarks;
-    // public $division_id, //* Forwarded to division id
-    //     $division_name;
     public $preview_file_id = [];
     public $document_history = [];
 
@@ -217,9 +215,6 @@ class Documents extends Component
 
             //* 1. Everytime users other than the superadmin and the admin, if they open the document, it will be marked as opened
             if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_document->status->status_name == 'forwarded') {
-                // $incoming_document = IncomingDocumentModel::findOrFail($incoming_document_id);
-                // $incoming_document->status_id = '15'; // Received
-                // $incoming_document->save();
 
                 //* 2. Then we check if all incoming documents are opened, we will update the status to received.
                 $this->checkIncomingDocumentIfAllOpened($incoming_document_id);
@@ -426,44 +421,9 @@ class Documents extends Component
         }
     }
 
-    public function checkForwardedToDivision(IncomingDocumentModel $incoming_document_id)
-    {
-        try {
-            $this->division_name = $incoming_document_id->division->division_name ?? '';
-        } catch (\Throwable $th) {
-            // throw $th;
-            $this->dispatch('error');
-        }
-    }
-
     public function forwardToDivision($incoming_document_id)
     {
         // We dispatch an event to trigger the modal and with a parameter which is the id of the incoming document. The child component which is the forwarded-to-division-modal will listen to the event together with the parameter.
-        $this->dispatch('show-forwardToDivisionModal', incoming_document_id: $incoming_document_id);
+        $this->dispatch('show-forwardToDivisionModal', id: $incoming_document_id);
     }
-
-    // public function forwardToDivision()
-    // {
-    //     $this->validate([
-    //         'division_id' => 'required'
-    //     ], [], [
-    //         'division_id' => 'division'
-    //     ]);
-
-    //     try {
-    //         DB::transaction(function () {
-    //             $incoming_request = IncomingDocumentModel::findOrFail($this->incoming_document_id);
-    //             $incoming_request->forwarded_to_division_id = $this->division_id;
-    //             $incoming_request->status_id = '8'; // FORWARDED
-    //             $incoming_request->save();
-    //         });
-
-    //         $this->clear();
-    //         $this->dispatch('hide-forwardToDivisionModal');
-    //         $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
-    //     } catch (\Throwable $th) {
-    //         // throw $th;
-    //         $this->dispatch('error');
-    //     }
-    // }
 }

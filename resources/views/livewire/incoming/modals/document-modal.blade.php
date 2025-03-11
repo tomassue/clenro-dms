@@ -9,7 +9,7 @@
             <div class="modal-body">
                 <form class="form" wire:submit="{{ $editMode ? 'updateIncomingDocument' : 'createIncomingDocument' }}">
                     <!--begin: CHANGE STATUS -->
-                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
+                    <div class="col-12 mb-10" style="display: {{ $editMode && (Auth::user()->division_id == 1 || !Auth::user()->division_id) ? '' : 'none' }};">
                         <label class="required fw-bold fs-6 mb-2">Status</label>
                         <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
                             <option value="">Open this select menu</option>
@@ -27,7 +27,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Category</label>
-                        <select class="form-select" aria-label="Select example" wire:model.live="category_id">
+                        <select class="form-select" aria-label="Select example" wire:model.live="category_id" {{ (Auth::user()->division_id == 1 || !Auth::user()->division_id) ? '' : 'disabled' }}>
                             <option value="">Open this select menu</option>
                             @foreach($incoming_document_category_select as $item)
                             <option value="{{ $item->id }}">{{ $item->incoming_document_category_name }}</option>
@@ -43,7 +43,7 @@
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Document Info</label>
                         <!-- <textarea class="form-control" wire:model="info" rows="4"></textarea> -->
-                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="info">
+                        <input type="text" class="form-control mb-3 mb-lg-0" wire:model="info" {{ (Auth::user()->division_id == 1 || !Auth::user()->division_id) ? '' : 'disabled' }}>
                         @error('info')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>
@@ -53,7 +53,7 @@
 
                     <div class="col-12 mb-10">
                         <label class="required fw-bold fs-6 mb-2">Date</label>
-                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date" />
+                        <input type="date" class="form-control mb-3 mb-lg-0" wire:model="date" {{ (Auth::user()->division_id == 1 || !Auth::user()->division_id) ? '' : 'disabled' }} />
                         @error('date')
                         <div class="fv-plugins-message-container invalid-feedback">
                             <div data-field="text_input" data-validator="notEmpty">{{ $message }}</div>

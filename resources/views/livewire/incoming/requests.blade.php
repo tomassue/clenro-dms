@@ -116,7 +116,8 @@
 
                                                 <!--begin::Menu item-->
                                                 <div class="menu-item px-3" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }};">
-                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="$dispatch('show-forwardToDivisionModal', { id: {{ $item->id }} })">
+                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                        wire:click="forwardToDivision({{ $item->id }})">
                                                         Forward
                                                     </a>
                                                 </div>
@@ -192,7 +193,7 @@
                             <!--end::Badge-->
                             <!--begin::Text-->
                             <div class="fw-mormal timeline-content text-muted ps-3">
-                                {{ $item->incoming_request_no }}
+                                {{ $item->incoming_request_no }} &nbsp;
                                 <span class="badge 
                                 @if($item->status->status_name == 'pending')
                                 badge-light-danger
@@ -202,12 +203,15 @@
                                 badge-light-warning
                                 @elseif($item->status->status_name == 'completed')
                                 badge-light-success
-                                @elseif($item->status->status_name == 'cancelled')
+                                @else
                                 badge-light-dark
                                 @endif 
                                 text-capitalize">
-                                    {{ $item->status->status_name }}
-                                </span> ({{ $item->division->division_name ?? '-' }})
+                                    {{ $item->status->status_name }} &nbsp;
+                                </span>
+                                @foreach ($item->forwardedDivisions as $forwarded)
+                                ({{ $forwarded->division->division_name ?? '-' }})
+                                @endforeach
                             </div>
                             <!--end::Text-->
                         </div>
@@ -223,8 +227,10 @@
     <!--end::Row-->
 
     @include('livewire.incoming.modals.request-modal')
+
     @include('livewire.modals.document-history-modal')
-    @include('livewire.incoming.modals.forward-to-division-modal')
+
+    <livewire:components.forward-to-division-modal page="incoming requests" />
 </div>
 
 @script
@@ -246,9 +252,7 @@
         $('#documentHistoryModal').modal('show');
     });
 
-    $wire.on('show-forwardToDivisionModal', (id) => {
-        $wire.incoming_request_id = id.id; // $wire.propertyName is a way to access livewire component's properties. id.id is a way to access the id property of the id object.
-        $wire.checkForwardedToDivision(id.id);
+    $wire.on('show-forwardToDivisionModal', () => {
         $('#forwardToDivisionModal').modal('show');
     });
 

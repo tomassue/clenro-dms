@@ -5,14 +5,17 @@ namespace App\Livewire\Components;
 use App\Livewire\Incoming\Documents;
 use App\Models\DivisionModel;
 use App\Models\ForwardedIncomingDocumentsModel;
+use App\Models\ForwardedIncomingRequestModel;
 use App\Models\IncomingDocumentModel;
+use App\Models\IncomingRequestModel;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ForwardToDivisionModal extends Component
 {
-    public $incoming_document_id;
+    public $incoming_document_id,
+        $incoming_request_id;
     public $page;
     public $division_id = [];
 
@@ -32,9 +35,15 @@ class ForwardToDivisionModal extends Component
 
     //* An event was triggered from the parent component which is the documents together with the parameter.
     #[On('show-forwardToDivisionModal')]
-    public function setIncomingDocumentId($incoming_document_id)
+    public function setIncomingDocumentId($id)
     {
-        $this->incoming_document_id = $incoming_document_id;
+        if ($this->page == 'incoming requests') {
+            $this->incoming_request_id = $id;
+        } elseif ($this->page == 'incoming documents') {
+            $this->incoming_document_id = $id;
+        } else {
+            $this->dispatch('error');
+        }
     }
 
     public function clear()
@@ -70,38 +79,58 @@ class ForwardToDivisionModal extends Component
     {
         $this->validate($this->rules(), [], $this->attributes());
 
-        if ($this->page == 'incoming documents') {
-            try {
+        try {
+            if ($this->page == 'incoming requests') {
                 DB::transaction(function () {
                     foreach ($this->division_id as $item) {
-                        $incoming_document = IncomingDocumentModel::findOrFail($this->incoming_document_id);
-                        $incoming_document->status_id = '8'; // Forwarded
-                        $incoming_document->save();
+                        $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
+                        $incoming_request->status_id = '8'; // Forwarded
+                        $incoming_request->save();
 
-                        $forwarded_incoming_document = new ForwardedIncomingDocumentsModel();
-                        $forwarded_incoming_document->incoming_document_id = $this->incoming_document_id;
-                        $forwarded_incoming_document->division_id = $item;
-                        $forwarded_incoming_document->save();
+                        $forwarded_incoming_request = new ForwardedIncomingRequestModel();
+                        $forwarded_incoming_request->incoming_request_id = $this->incoming_request_id;
+                        $forwarded_incoming_request->division_id = $item;
+                        $forwarded_incoming_request->save();
                     }
                 });
 
                 $this->clear();
                 $this->dispatch('hide-forwardToDivisionModal');
-                $this->dispatch('success', message: 'Document forwarded to division successfully.');
+                $this->dispatch('success', message: 'Request forwarded to division successfully.');
+                $this->dispatch('refresh-incoming-requests');
+            } elseif ($this->page == 'incoming documents') {
+                try {
+                    DB::transaction(function () {
+                        foreach ($this->division_id as $item) {
+                            $incoming_document = IncomingDocumentModel::findOrFail($this->incoming_document_id);
+                            $incoming_document->status_id = '8'; // Forwarded
+                            $incoming_document->save();
 
-                /**
-                 ** Since every livewire compoment is an island, updates from the child component won't be reflected in the parent component.
-                 ** So we dispatch an event to refresh the parent component.
-                 * @see App\Livewire\Incoming\Documents::class, @method refreshIncomingDocuments
-                 */
-                $this->dispatch('refresh-incoming-documents');
-            } catch (\Throwable $th) {
-                // throw $th;
-                $this->dispatch('error');
+                            $forwarded_incoming_document = new ForwardedIncomingDocumentsModel();
+                            $forwarded_incoming_document->incoming_document_id = $this->incoming_document_id;
+                            $forwarded_incoming_document->division_id = $item;
+                            $forwarded_incoming_document->save();
+                        }
+                    });
+
+                    $this->clear();
+                    $this->dispatch('hide-forwardToDivisionModal');
+                    $this->dispatch('success', message: 'Document forwarded to division successfully.');
+
+                    /**
+                     ** Since every livewire compoment is an island, updates from the child component won't be reflected in the parent component.
+                     ** So we dispatch an event to refresh the parent component.
+                     * @see App\Livewire\Incoming\Documents::class, @method refreshIncomingDocuments
+                     */
+                    $this->dispatch('refresh-incoming-documents');
+                } catch (\Throwable $th) {
+                    // throw $th;
+                    $this->dispatch('error');
+                }
             }
-        } else {
-            //TODO Incoming Requests 
-            dd('wew');
+        } catch (\Throwable $th) {
+            //throw $th;
+            $this->dispatch('error');
         }
     }
 }

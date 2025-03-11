@@ -5,6 +5,7 @@ namespace App\Livewire\Incoming;
 use App\Models\CategoryModel;
 use App\Models\DivisionModel;
 use App\Models\FilesModel;
+use App\Models\ForwardedIncomingRequestModel;
 use App\Models\IncomingRequestCategoryModel;
 use App\Models\IncomingRequestModel;
 use App\Models\StatusModel;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -100,6 +102,12 @@ class Requests extends Component
         $this->incoming_request_no = IncomingRequestModel::generateUniqueReference('REF-', 8); // Pre-generate reference number to show in the input field (disabled).
     }
 
+    #[On('refresh-incoming-requests')]
+    public function refreshIncomingRequest()
+    {
+        $this->loadIncomingRequests();
+    }
+
     public function render()
     {
         return view(
@@ -116,26 +124,6 @@ class Requests extends Component
 
     public function loadIncomingRequests()
     {
-        // $user = auth()->user();
-
-        // $user_division_id = $user->division_id;
-
-        // return IncomingRequestModel::query()
-        //     ->when($this->filter_status, function ($query) {
-        //         $query->where('status_id', $this->filter_status);
-        //     })
-        //     ->when($this->search, function ($query) {
-        //         $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
-        //     })
-        //     ->when(!empty($user_division_id) && $user_division_id != "1", function ($query) use ($user_division_id) {
-        //         $query->where(function ($subQuery) use ($user_division_id) {
-        //             $subQuery->whereNull('forwarded_to_division_id')
-        //                 ->orWhere('forwarded_to_division_id', $user_division_id);
-        //         });
-        //     })
-        //     ->orderBy('created_at', 'desc')
-        //     ->paginate(10);
-
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
@@ -147,7 +135,9 @@ class Requests extends Component
                 $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
             })
             ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-                $query->where('forwarded_to_division_id', $user_division_id);
+                $query->whereHas('forwardedDivisions', function ($subQuery) use ($user_division_id) {
+                    $subQuery->where('division_id', $user_division_id);
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -156,9 +146,8 @@ class Requests extends Component
     public function loadRecentForwardedIncomingRequests()
     {
         return IncomingRequestModel::query()
-            ->with('division')
-            ->whereNotNull('forwarded_to_division_id')
-            ->orderBy('updated_at', 'desc')
+            ->with('forwardedDivisions.division') // Load division along with forwardedDivisions
+            ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
     }
@@ -233,10 +222,20 @@ class Requests extends Component
 
             $incoming_request = IncomingRequestModel::withTrashed()->findOrFail($incoming_request_id);
 
+            //* 1. Everytime users other than the superadmin and the admin, if they open the request, it will be marked as opened
             if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_request->status->status_name == 'forwarded') {
-                $incoming_request = IncomingRequestModel::findOrFail($incoming_request_id);
-                $incoming_request->status_id = '15'; // Received
-                $incoming_request->save();
+
+                $forwarded_incoming_request = ForwardedIncomingRequestModel::where('incoming_request_id', $incoming_request_id)
+                    ->where('division_id', Auth::user()->division_id)
+                    ->first();
+
+                if ($forwarded_incoming_request) {
+                    $forwarded_incoming_request->is_opened = true; // Received
+                    $forwarded_incoming_request->save();
+                }
+
+                //* 2. Then we check if all incoming requests are opened, we will update the status to received.
+                $this->checkIncomingRequestIfAllOpened($incoming_request_id);
             }
 
             $this->fill(
@@ -264,7 +263,27 @@ class Requests extends Component
 
             $this->dispatch('show-incomingRequestModal');
         } catch (\Throwable $th) {
-            // throw $th;
+            throw $th;
+            $this->dispatch('error');
+        }
+    }
+
+    public function checkIncomingRequestIfAllOpened($incoming_request_id)
+    {
+        try {
+            $totalForwarded = ForwardedIncomingRequestModel::where('incoming_request_id', $incoming_request_id)->count();
+
+            $totalOpened = ForwardedIncomingRequestModel::where('incoming_request_id', $incoming_request_id)
+                ->where('is_opened', true)
+                ->count();
+
+            if ($totalForwarded == $totalOpened) {
+                $incoming_request = IncomingRequestModel::findOrFail($incoming_request_id);
+                $incoming_request->status_id = '15'; // Received
+                $incoming_request->save();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
             $this->dispatch('error');
         }
     }
@@ -378,23 +397,42 @@ class Requests extends Component
             $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
             $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
 
-            $this->document_history = Activity::where('subject_type', IncomingRequestModel::class)
+            $this->document_history = Activity::whereIn('subject_type', [IncomingRequestModel::class, ForwardedIncomingRequestModel::class])
+                ->whereIn('log_name', ['incoming request', 'forwarded incoming request'])
                 ->where('subject_id', $incoming_request_id)
-                ->where('log_name', 'incoming request')
-                ->whereNotNull('properties->attributes->status_id') //* View logs with changes in status_id ONLY
+
+                /**
+                 ** Here, I want to exclude created forwarded incoming request.
+                 ** I can't directly use ->where('log_name', 'forwarded incoming request')->whereNot('event', 'created') because it it would only filter forwarded incoming request logs and completely exclude incoming request logs.
+                 ** So, we need to include all incoming request and include forwarded incoming request logs, but exclude created forwarded incoming request logs.
+                 */
+                ->where(function ($query) {
+                    $query->where('log_name', '!=', 'forwarded incoming request')
+                        ->orWhere(function ($subQuery) {
+                            $subQuery->where('log_name', 'forwarded incoming request')
+                                ->whereNot('event', 'created');
+                        });
+                })
+                ->where(function ($query) {
+                    $query->whereNotNull('properties->attributes->status_id')
+                        ->orWhereNotNull('properties->attributes->is_opened'); //* Show only records with either status_id OR is_opened
+                })
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($item) use ($statusMap, $divisionMap) {
-                    // $oldStatusId = $item->properties['old']['status_id'] ?? null; //* OLD attributes
+                    $attributes = $item->properties['attributes'] ?? [];
+                    // $oldStatusId = $item->properties['old']['status_id'] ?? null;
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
                     $division = $item->properties['attributes']['forwarded_to_division_id'] ?? null;
 
                     return [
                         // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
                         'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
-                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : (isset($attributes['is_opened']) ? ((bool) $attributes['is_opened'] ? 'Opened' : '-') : '-'), //* UPDATED attributes
                         'forwarded_to_division' => $divisionMap[$division] ?? 'N/A',
-                        'updated_by' => $item->causer ? $item->causer->name : 'System'
+                        'updated_by' => $item->causer ? $item->causer->name : 'System',
+                        'subject_type' => $item->subject_type,
+                        'is_opened' => isset($attributes['is_opened']) ? (bool) $attributes['is_opened'] : '-'
                     ];
                 });
 
@@ -404,38 +442,10 @@ class Requests extends Component
         }
     }
 
-    public function checkForwardedToDivision(IncomingRequestModel $incoming_request_id)
+    public function forwardToDivision($incoming_request_id)
     {
-        try {
-            $this->division_name = $incoming_request_id->division->division_name ?? '';
-        } catch (\Throwable $th) {
-            // throw $th;
-            $this->dispatch('error');
-        }
-    }
-
-    public function forwardToDivision()
-    {
-        $this->validate([
-            'division_id' => 'required'
-        ], [], [
-            'division_id' => 'division'
-        ]);
-
-        try {
-            DB::transaction(function () {
-                $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
-                $incoming_request->forwarded_to_division_id = $this->division_id;
-                $incoming_request->status_id = '3'; // FORWARDED
-                $incoming_request->save();
-            });
-
-            $this->clear();
-            $this->dispatch('hide-forwardToDivisionModal');
-            $this->dispatch('success', message: 'Incoming Request forwarded successfully.');
-        } catch (\Throwable $th) {
-            throw $th;
-            $this->dispatch('error');
-        }
+        // We dispatch an event to trigger the modal and with a parameter which is the id of the incoming request.
+        //The child component which is the forwarded-to-division-modal will listen to the event together with the parameter.
+        $this->dispatch('show-forwardToDivisionModal', id: $incoming_request_id);
     }
 }
