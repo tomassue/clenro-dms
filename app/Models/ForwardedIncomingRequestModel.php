@@ -41,4 +41,9 @@ class ForwardedIncomingRequestModel extends Model
     {
         return $this->belongsTo(DivisionModel::class, 'division_id', 'id');
     }
+
+    public function incomingRequest()
+    {
+        return $this->belongsTo(IncomingRequestModel::class, 'incoming_request_id', 'id');
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Components\ForwardToDivisionModal;
+use App\Models\ForwardedIncomingRequestModel;
 use App\Models\IncomingRequestModel;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -38,50 +40,58 @@ class Dashboard extends Component
         $user = auth()->user();
         $user_division_id = $user->division_id;
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-            $query->where('forwarded_to_division_id', $user_division_id);
-        })
-            ->count();
+        return !is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== ""
+            ? ForwardedIncomingRequestModel::where('division_id', $user_division_id)
+            ->count()
+            : IncomingRequestModel::count();
     }
 
     public function countPendingIncomingRequest()
     {
         $user = auth()->user();
         $user_division_id = $user->division_id;
+        $status_id = 4; // Completed
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-            $query->where('forwarded_to_division_id', $user_division_id);
-        })
-            ->where('status_id', '1') // Pending
-            ->count();
+        return !is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== ""
+            ? ForwardedIncomingRequestModel::where('division_id', $user_division_id)
+            ->whereHas('incomingRequest', function ($query) use ($status_id) {
+                $query->whereNot('status_id', $status_id);
+            })
+            ->count()
+            : IncomingRequestModel::whereNot('status_id', $status_id)->count();
     }
 
     public function countCompletedIncomingRequest()
     {
         $user = auth()->user();
         $user_division_id = $user->division_id;
+        $status_id = 4; // Completed
 
-        return IncomingRequestModel::when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-            $query->where('forwarded_to_division_id', $user_division_id);
-        })
-            ->where('status_id', '4') // Completed
-            ->count();
+        return !is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== ""
+            ? ForwardedIncomingRequestModel::where('division_id', $user_division_id)
+            ->whereHas('incomingRequest', function ($query) use ($status_id) {
+                $query->where('status_id', $status_id);
+            })
+            ->count()
+            : IncomingRequestModel::where('status_id', $status_id)->count();
     }
 
     public function loadIncomingRequests()
     {
         $user = auth()->user();
         $user_division_id = $user->division_id;
+        $status_id = 4; // Completed
 
-        return IncomingRequestModel::query()
-            // ->when($this->search, function ($query) {
-            //     $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
-            // })
-            ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
-                $query->where('forwarded_to_division_id', $user_division_id);
+        return !is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== ""
+            ? ForwardedIncomingRequestModel::with('incomingRequest') // Eager load relationship
+            ->where('division_id', $user_division_id)
+            ->whereHas('incomingRequest', function ($query) use ($status_id) {
+                $query->whereNot('status_id', $status_id);
             })
-            ->where('status_id', '1')
             ->orderBy('created_at', 'asc')
-            ->paginate(10);
+            ->get()
+            : IncomingRequestModel::whereNot('status_id', $status_id)
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 }

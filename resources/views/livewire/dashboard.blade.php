@@ -64,10 +64,10 @@
                             <tbody>
                                 @forelse($incoming_requests as $item)
                                 <tr style="cursor: pointer" onclick="window.location='{{ route('incoming.requests') }}'">
-                                    <td>{{ $item->incoming_request_no }}</td>
-                                    <td>{{ $item->formatted_date_requested }}</td>
-                                    <td>{{ $item->office_or_barangay_or_organization_name }}</td>
-                                    <td>{{ $item->category->incoming_request_category_name }}</td>
+                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->incoming_request_no : $item->incoming_request_no }}</td>
+                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->formatted_date_requested : $item->formatted_date_requested }}</td>
+                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->office_or_barangay_or_organization_name : $item->office_or_barangay_or_organization_name }}</td>
+                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->category->incoming_request_category_name : $item->incoming_request_category_name }}</td>
                                 </tr>
                                 @empty
                                 <tr>
