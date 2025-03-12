@@ -119,12 +119,12 @@
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Causer</th>
+                                <th>Updated by</th>
                                 <th>Changes</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($outgoing_history as $history)
+                            @forelse ($outgoing_history as $history)
                             <tr>
                                 <td>{{ $history['created_at'] }}</td>
                                 <td>{{ $history['causer'] }}</td>
@@ -140,7 +140,11 @@
                                     </ul>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="3" class="text-center">No record/s</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

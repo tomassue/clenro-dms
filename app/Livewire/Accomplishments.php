@@ -235,6 +235,7 @@ class Accomplishments extends Component
             $this->outgoing_history = Activity::where('subject_type', AccomplishmentModel::class)
                 ->where('subject_id', $outgoing_id)
                 ->where('log_name', 'accomplishment')
+                ->whereNot('event', 'created')
                 ->latest()
                 ->get()
                 ->map(function ($activity) {
@@ -246,18 +247,18 @@ class Accomplishments extends Component
                         'changes' => collect($activity->properties['attributes'] ?? [])
                             ->except(['id', 'created_at', 'updated_at', 'deleted_at']) // Exclude timestamps
                             ->map(function ($newValue, $key) use ($activity) {
-                                $oldValue = $activity->properties['old'][$key] ?? 'N/A';
+                                $oldValue = $activity->properties['old'][$key] ?? '-';
 
                                 // Format date fields
                                 if (in_array($key, ['date', 'deleted_at'])) {
-                                    $oldValue = $oldValue !== 'N/A' ? Carbon::parse($oldValue)->format('M d, Y') : 'N/A';
-                                    $newValue = $newValue !== 'N/A' ? Carbon::parse($newValue)->format('M d, Y') : 'N/A';
+                                    $oldValue = $oldValue !== '-' ? Carbon::parse($oldValue)->format('M d, Y') : '-';
+                                    $newValue = $newValue !== '-' ? Carbon::parse($newValue)->format('M d, Y') : '-';
                                 }
 
                                 // Replace foreign keys with related names
                                 if ($key === 'accomplishment_category_id') {
-                                    $oldValue = $oldValue !== 'N/A' ? AccomplishmentCategoryModel::find($oldValue)?->accomplishment_category_name : 'N/A';
-                                    $newValue = $newValue !== 'N/A' ? AccomplishmentCategoryModel::find($newValue)?->accomplishment_category_name : 'N/A';
+                                    $oldValue = $oldValue !== '-' ? AccomplishmentCategoryModel::find($oldValue)?->accomplishment_category_name : '-';
+                                    $newValue = $newValue !== '-' ? AccomplishmentCategoryModel::find($newValue)?->accomplishment_category_name : '-';
                                 }
 
                                 // Convert array values to a string (e.g., file IDs to filenames)
@@ -268,12 +269,12 @@ class Accomplishments extends Component
 
                                     if (is_array($oldValue)) {
                                         $oldValue = FilesModel::whereIn('id', $oldValue)->pluck('file_name')->toArray();
-                                        $oldValue = !empty($oldValue) ? implode(', ', $oldValue) : 'N/A';
+                                        $oldValue = !empty($oldValue) ? implode(', ', $oldValue) : '-';
                                     }
 
                                     if (is_array($newValue)) {
                                         $newValue = FilesModel::whereIn('id', $newValue)->pluck('file_name')->toArray();
-                                        $newValue = !empty($newValue) ? implode(', ', $newValue) : 'N/A';
+                                        $newValue = !empty($newValue) ? implode(', ', $newValue) : '-';
                                     }
                                 }
 
