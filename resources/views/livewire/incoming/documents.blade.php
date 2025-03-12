@@ -111,7 +111,7 @@
                                                 <!--end::Menu item-->
 
                                                 <!--begin::Menu item-->
-                                                <div class="menu-item px-3" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) ? 'none' : '' }};">
+                                                <div class="menu-item px-3" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) || $item->status->status_name == 'completed' ? 'none' : '' }};">
                                                     <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
                                                         wire:click="forwardToDivision({{ $item->id }})">
                                                         Forward

@@ -152,6 +152,9 @@ class Documents extends Component
     {
         return StatusModel::where('status_type', 'incoming document')
             ->whereNot('status_name', 'forwarded')
+            ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
+                $query->whereNot('status_name', 'completed');
+            })
             ->get();
     }
 
@@ -216,9 +219,6 @@ class Documents extends Component
             //* 1. Everytime users other than the superadmin and the admin, if they open the document, it will be marked as opened
             if (Auth::user()->division_id != 1 && !empty(Auth::user()->division_id) && $incoming_document->status->status_name == 'forwarded') {
 
-                //* 2. Then we check if all incoming documents are opened, we will update the status to received.
-                $this->checkIncomingDocumentIfAllOpened($incoming_document_id);
-
                 $forwarded_incoming_document = ForwardedIncomingDocumentsModel::where('incoming_document_id', $incoming_document_id)
                     ->where('division_id', Auth::user()->division_id)
                     ->first();
@@ -227,6 +227,9 @@ class Documents extends Component
                     $forwarded_incoming_document->is_opened = true; // Received
                     $forwarded_incoming_document->save();
                 }
+
+                //* 2. Then we check if all incoming documents are opened, we will update the status to received.
+                $this->checkIncomingDocumentIfAllOpened($incoming_document_id);
             }
 
             $this->fill(

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('person_responsible');
             $table->json('file_id');
             $table->string('status_id');
+            $table->string('user_id');
             $table->timestamps();
             $table->softDeletes();
         });

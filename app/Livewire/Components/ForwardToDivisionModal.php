@@ -102,7 +102,7 @@ class ForwardToDivisionModal extends Component
                 DB::transaction(function () {
                     foreach ($this->division_id as $item) {
                         $incoming_request = IncomingRequestModel::findOrFail($this->incoming_request_id);
-                        $incoming_request->status_id = '8'; // Forwarded
+                        $incoming_request->status_id = '3'; // Forwarded
                         $incoming_request->save();
 
                         // $forwarded_incoming_request = new ForwardedIncomingRequestModel();

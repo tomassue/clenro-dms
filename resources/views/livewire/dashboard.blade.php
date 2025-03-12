@@ -2,7 +2,7 @@
     <!--begin::Row-->
     <div class="row g-5 g-xl-8">
         <!--begin::Col-->
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
             <div class="card card-dashed">
                 <div class="card-header">
                     <h3 class="card-title">Pending Request</h3>
@@ -15,26 +15,39 @@
         <!--end::Col-->
 
         <!--begin::Col-->
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
             <div class="card card-dashed">
                 <div class="card-header">
-                    <h3 class="card-title">Total Requests</h3>
+                    <h3 class="card-title">Forwarded Request</h3>
                 </div>
                 <div class="card-body text-center" style="font-size: 50px;">
-                    {{ $total_requests }}
+                    {{ $forwarded_requests }}
                 </div>
             </div>
         </div>
         <!--end::Col-->
 
         <!--begin::Col-->
-        <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
             <div class="card card-dashed">
                 <div class="card-header">
                     <h3 class="card-title">Completed Request</h3>
                 </div>
                 <div class="card-body text-center" style="font-size: 50px;">
                     {{ $completed_requests }}
+                </div>
+            </div>
+        </div>
+        <!--end::Col-->
+
+        <!--begin::Col-->
+        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
+            <div class="card card-dashed">
+                <div class="card-header">
+                    <h3 class="card-title">Total Requests</h3>
+                </div>
+                <div class="card-body text-center" style="font-size: 50px;">
+                    {{ $total_requests }}
                 </div>
             </div>
         </div>
@@ -67,7 +80,7 @@
                                     <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->incoming_request_no : $item->incoming_request_no }}</td>
                                     <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->formatted_date_requested : $item->formatted_date_requested }}</td>
                                     <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->office_or_barangay_or_organization_name : $item->office_or_barangay_or_organization_name }}</td>
-                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->category->incoming_request_category_name : $item->incoming_request_category_name }}</td>
+                                    <td>{{ !is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "" ? $item->incomingRequest->category->incoming_request_category_name : $item->category->incoming_request_category_name }}</td>
                                 </tr>
                                 @empty
                                 <tr>

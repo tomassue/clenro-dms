@@ -129,6 +129,10 @@ class Outgoing extends Component
                 // When no filter is provided, exclude status_id '13'.
                 $query->where('status_id', '!=', '13');
             })
+            ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
+                $query->where('user_id', Auth::user()->id);
+            })
+            ->latest()
             ->paginate(10);
     }
 
@@ -156,6 +160,7 @@ class Outgoing extends Component
                     $outgoing->details = $this->details;
                     $outgoing->destination = $this->destination;
                     $outgoing->person_responsible = $this->person_responsible;
+                    $outgoing->user_id = Auth::user()->id;
 
                     //* File upload
                     foreach ($this->file_id ?? [] as $file) {
@@ -194,6 +199,7 @@ class Outgoing extends Component
                     $outgoing->details = $this->details;
                     $outgoing->destination = $this->destination;
                     $outgoing->person_responsible = $this->person_responsible;
+                    $outgoing->user_id = Auth::user()->id;
 
                     //* File upload
                     foreach ($this->file_id ?? [] as $file) {
@@ -231,6 +237,7 @@ class Outgoing extends Component
                     $outgoing->details = $this->details;
                     $outgoing->destination = $this->destination;
                     $outgoing->person_responsible = $this->person_responsible;
+                    $outgoing->user_id = Auth::user()->id;
 
                     //* File upload
                     foreach ($this->file_id ?? [] as $file) {
@@ -267,6 +274,7 @@ class Outgoing extends Component
                     $outgoing->details = $this->details;
                     $outgoing->destination = $this->destination;
                     $outgoing->person_responsible = $this->person_responsible;
+                    $outgoing->user_id = Auth::user()->id;
 
                     //* File upload
                     foreach ($this->file_id ?? [] as $file) {
@@ -303,6 +311,7 @@ class Outgoing extends Component
                     $outgoing->details = $this->details;
                     $outgoing->destination = $this->destination;
                     $outgoing->person_responsible = $this->person_responsible;
+                    $outgoing->user_id = Auth::user()->id;
 
                     //* File upload
                     foreach ($this->file_id ?? [] as $file) {

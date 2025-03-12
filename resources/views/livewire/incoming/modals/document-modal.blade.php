@@ -9,7 +9,7 @@
             <div class="modal-body">
                 <form class="form" wire:submit="{{ $editMode ? 'updateIncomingDocument' : 'createIncomingDocument' }}">
                     <!--begin: CHANGE STATUS -->
-                    <div class="col-12 mb-10" style="display: {{ $editMode && (Auth::user()->division_id == 1 || !Auth::user()->division_id) ? '' : 'none' }};">
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
                         <label class="required fw-bold fs-6 mb-2">Status</label>
                         <select class="form-select text-capitalize" aria-label="Select example" wire:model="status_id">
                             <option value="">Open this select menu</option>

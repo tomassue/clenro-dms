@@ -132,7 +132,17 @@ class Requests extends Component
                 $query->where('status_id', $this->filter_status);
             })
             ->when($this->search, function ($query) {
-                $query->where('incoming_request_no', 'like', '%' . $this->search . '%');
+                $query->where(function ($q) {
+                    $q->where('incoming_request_no', 'like', '%' . $this->search . '%')
+                        ->orWhere('office_or_barangay_or_organization_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('date_requested', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_person_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_person_number', 'like', '%' . $this->search . '%')
+                        ->orWhere('description', 'like', '%' . $this->search . '%');
+                })
+                    ->orWhereHas('category', function ($subQuery) {
+                        $subQuery->where('incoming_request_category_name', 'like', '%' . $this->search . '%');
+                    });
             })
             ->when(!is_null($user_division_id) && $user_division_id != "1" && $user_division_id !== "", function ($query) use ($user_division_id) {
                 $query->whereHas('forwardedDivisions', function ($subQuery) use ($user_division_id) {

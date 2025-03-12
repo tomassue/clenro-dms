@@ -21,7 +21,8 @@ class OutgoingModel extends Model
         'details',
         'destination',
         'person_responsible',
-        'file_id'
+        'file_id',
+        'user_id'
     ];
 
     /* -------------------------------------------------------------------------- */

@@ -84,7 +84,8 @@ class Accomplishments extends Component
                 $query->where('details', 'like', '%' . $search . '%')
                     ->orWhereHas('accomplishment_category', function ($query) use ($search) {
                         $query->where('accomplishment_category_name', 'like', '%' . $search . '%');
-                    });
+                    })
+                    ->orWhere('no_of_participants', 'like', '%' . $search . '%');
             });
         })
             ->paginate(10);
