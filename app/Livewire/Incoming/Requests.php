@@ -420,16 +420,14 @@ class Requests extends Component
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($item) use ($statusMap, $divisionMap) {
-                    $attributes = $item->properties['attributes'] ?? [];
                     // $oldStatusId = $item->properties['old']['status_id'] ?? null;
                     $newStatusId = $item->properties['attributes']['status_id'] ?? null;
-                    $division = $item->properties['attributes']['forwarded_to_division_id'] ?? null;
+                    $attributes = $item->properties['attributes'] ?? [];
 
                     return [
                         // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
                         'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
                         'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : (isset($attributes['is_opened']) ? ((bool) $attributes['is_opened'] ? 'Opened' : '-') : '-'), //* UPDATED attributes
-                        'forwarded_to_division' => $divisionMap[$division] ?? 'N/A',
                         'updated_by' => $item->causer ? $item->causer->name : 'System',
                         'subject_type' => $item->subject_type,
                         'is_opened' => isset($attributes['is_opened']) ? (bool) $attributes['is_opened'] : '-'

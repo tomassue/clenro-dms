@@ -50,5 +50,13 @@
     $wire.on('reset-division-select', () => {
         document.querySelector('#division-select').reset();
     });
+
+    $wire.on('set-division-select', (id) => {
+        // Ensure the data is correctly formatted
+        const formattedData = id.id.map(Number); // Convert strings to numbers
+
+        // Should log [2, 3]
+        document.querySelector('#division-select').setValue(formattedData);
+    });
 </script>
 @endscript

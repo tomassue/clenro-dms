@@ -39,8 +39,26 @@ class ForwardToDivisionModal extends Component
     {
         if ($this->page == 'incoming requests') {
             $this->incoming_request_id = $id;
+
+            $this->division_id = [];
+
+            $this->division_id = ForwardedIncomingRequestModel::where('incoming_request_id', $id)
+                ->pluck('division_id')
+                ->map(fn($id) => (int) $id)
+                ->toArray();
+
+            $this->dispatch('set-division-select', id: $this->division_id);
         } elseif ($this->page == 'incoming documents') {
             $this->incoming_document_id = $id;
+
+            $this->division_id = [];
+
+            $this->division_id = ForwardedIncomingDocumentsModel::where('incoming_document_id', $id)
+                ->pluck('division_id')
+                ->map(fn($id) => (int) $id)
+                ->toArray();
+
+            $this->dispatch('set-division-select', id: $this->division_id);
         } else {
             $this->dispatch('error');
         }
@@ -87,10 +105,32 @@ class ForwardToDivisionModal extends Component
                         $incoming_request->status_id = '8'; // Forwarded
                         $incoming_request->save();
 
-                        $forwarded_incoming_request = new ForwardedIncomingRequestModel();
-                        $forwarded_incoming_request->incoming_request_id = $this->incoming_request_id;
-                        $forwarded_incoming_request->division_id = $item;
-                        $forwarded_incoming_request->save();
+                        // $forwarded_incoming_request = new ForwardedIncomingRequestModel();
+                        // $forwarded_incoming_request->incoming_request_id = $this->incoming_request_id;
+                        // $forwarded_incoming_request->division_id = $item;
+                        // $forwarded_incoming_request->save();
+
+                        // Get currently saved division IDs from the database
+                        $existing_division_ids = ForwardedIncomingRequestModel::where('incoming_request_id', $this->incoming_request_id)
+                            ->pluck('division_id')
+                            ->toArray();
+
+                        // Determine which divisions need to be deleted
+                        $divisions_to_delete = array_diff($existing_division_ids, $this->division_id);
+                        if (!empty($divisions_to_delete)) {
+                            ForwardedIncomingRequestModel::where('incoming_request_id', $this->incoming_request_id)
+                                ->whereIn('division_id', $divisions_to_delete)
+                                ->delete();
+                        }
+
+                        // Determine which divisions need to be inserted
+                        $divisions_to_insert = array_diff($this->division_id, $existing_division_ids);
+                        foreach ($divisions_to_insert as $division) {
+                            ForwardedIncomingRequestModel::create([
+                                'incoming_request_id' => $this->incoming_request_id,
+                                'division_id' => $division,
+                            ]);
+                        }
                     }
                 });
 
@@ -106,10 +146,32 @@ class ForwardToDivisionModal extends Component
                             $incoming_document->status_id = '8'; // Forwarded
                             $incoming_document->save();
 
-                            $forwarded_incoming_document = new ForwardedIncomingDocumentsModel();
-                            $forwarded_incoming_document->incoming_document_id = $this->incoming_document_id;
-                            $forwarded_incoming_document->division_id = $item;
-                            $forwarded_incoming_document->save();
+                            // $forwarded_incoming_document = new ForwardedIncomingDocumentsModel();
+                            // $forwarded_incoming_document->incoming_document_id = $this->incoming_document_id;
+                            // $forwarded_incoming_document->division_id = $item;
+                            // $forwarded_incoming_document->save();
+
+                            // Get currently saved division IDs from the database
+                            $existing_division_ids = ForwardedIncomingDocumentsModel::where('incoming_document_id', $this->incoming_document_id)
+                                ->pluck('division_id')
+                                ->toArray();
+
+                            // Determine which divisions need to be deleted
+                            $divisions_to_delete = array_diff($existing_division_ids, $this->division_id);
+                            if (!empty($divisions_to_delete)) {
+                                ForwardedIncomingDocumentsModel::where('incoming_document_id', $this->incoming_document_id)
+                                    ->whereIn('division_id', $divisions_to_delete)
+                                    ->delete();
+                            }
+
+                            // Determine which divisions need to be inserted
+                            $divisions_to_insert = array_diff($this->division_id, $existing_division_ids);
+                            foreach ($divisions_to_insert as $division) {
+                                ForwardedIncomingDocumentsModel::create([
+                                    'incoming_document_id' => $this->incoming_document_id,
+                                    'division_id' => $division,
+                                ]);
+                            }
                         }
                     });
 

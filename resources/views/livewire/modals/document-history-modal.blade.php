@@ -37,9 +37,7 @@
                                             @endif
                                             text-capitalize">
                                         {{
-                                            $item['status'] == 'forwarded'
-                                                ? $item['status'] . ( ($item['forwarded_to_division'] ?? false) ? ' (' . $item['forwarded_to_division'] . ')' : '' )
-                                                : $item['status']
+                                            $item['status']
                                         }}
                                     </span>
                                 </td>
