@@ -88,6 +88,9 @@ class Accomplishments extends Component
                     ->orWhere('no_of_participants', 'like', '%' . $search . '%');
             });
         })
+            ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
+                $query->where('user_id', Auth::user()->id);
+            })
             ->paginate(10);
     }
 
@@ -123,6 +126,7 @@ class Accomplishments extends Component
                 }
 
                 $accomplishment->file_id = json_encode($file_id ?? []);
+                $accomplishment->user_id = Auth::user()->id;
                 $accomplishment->save();
             });
 
@@ -217,6 +221,8 @@ class Accomplishments extends Component
                     $updated_file_id = array_unique(array_merge($existing_file_id, $file_id));
                     $accomplishment->file_id = json_encode($updated_file_id);
                 }
+
+                $accomplishment->user_id = Auth::user()->id;
 
                 $accomplishment->save();
             });

@@ -19,7 +19,8 @@ class AccomplishmentModel extends Model
         'details',
         'no_of_participants',
         'remarks',
-        'file_id'
+        'file_id',
+        'user_id'
     ];
 
     public function getActivitylogOptions(): LogOptions

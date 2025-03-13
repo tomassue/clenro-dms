@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('no_of_participants');
             $table->longText('remarks')->nullable();
             $table->json('file_id')->nullable();
+            $table->string('user_id');
             $table->softDeletes();
             $table->timestamps();
         });
