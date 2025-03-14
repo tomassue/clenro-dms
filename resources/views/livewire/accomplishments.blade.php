@@ -48,39 +48,27 @@
                                         <td>{{ $item->details }}</td>
                                         <td>{{ $item->no_of_participants }}</td>
                                         <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-flush dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @can('update accomplishments')
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            wire:click="readAccomplishment({{ $item->id }})">
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    @endcan
 
-
-                                            <!--begin::Trigger-->
-                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
-                                                data-kt-menu-trigger="click"
-                                                data-kt-menu-placement="bottom-start">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <!--end::Trigger-->
-
-                                            <!--begin::Menu-->
-                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
-                                                data-kt-menu="true">
-
-                                                @can('update accomplishments')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readAccomplishment({{ $item->id }})">
-                                                        Edit
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
-
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readOutgoingHistory({{ $item->id }})">
-                                                        History
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            wire:click="readOutgoingHistory({{ $item->id }})">
+                                                            History
+                                                        </a>
+                                                    </li>
+                                                </ul>
                                             </div>
-                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty

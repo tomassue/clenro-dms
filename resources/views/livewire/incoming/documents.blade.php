@@ -52,6 +52,7 @@
                                 <thead>
                                     <tr class="fw-bold fs-6 text-gray-800 border-bottom border-gray-200">
                                         <th>Category</th>
+                                        <th>Date</th>
                                         <th>Details</th>
                                         <th>Status</th>
                                         <th>Actions</th>
@@ -61,6 +62,7 @@
                                     @forelse($incoming_documents as $item)
                                     <tr>
                                         <td>{{ $item->category->incoming_document_category_name }}</td>
+                                        <td>{{ $item->formatted_date }}</td>
                                         <td>{{ $item->info }}</td>
                                         <td>
                                             <span class="badge 
@@ -81,54 +83,42 @@
                                                 {{ $item->status->status_name }}
                                             </span>
                                         </td>
-                                        <td>
-                                            <!--begin::Trigger-->
-                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
-                                                data-kt-menu-trigger="click"
-                                                data-kt-menu-placement="bottom-start">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <!--end::Trigger-->
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-flush dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li style="display: {{ $item->status->status_name == 'completed' ? '' : 'none' }};">
+                                                        <a class="dropdown-item"
+                                                            wire:click="viewIncomingDocument({{ $item->id }})">
+                                                            View
+                                                        </a>
+                                                    </li>
 
-                                            <!--begin::Menu-->
-                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
-                                                data-kt-menu="true">
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3" style="display: {{ $item->status->status_name == 'completed' ? '' : 'none' }};">
-                                                    <a href="#" class="menu-link px-3" wire:click="viewIncomingDocument({{ $item->id }})">
-                                                        View
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
+                                                    @can('update incoming documents')
+                                                    <li style="display: {{ $item->status->status_name == 'completed' ? 'none' : '' }};">
+                                                        <a class="dropdown-item {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                            wire:click="readIncomingDocument({{ $item->id }})">
+                                                            View
+                                                        </a>
+                                                    </li>
 
-                                                @can('update incoming documents')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3" style="display: {{ $item->status->status_name == 'completed' ? 'none' : '' }};">
-                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}" wire:click="readIncomingDocument({{ $item->id }})">
-                                                        Edit
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
+                                                    <li style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) || $item->status->status_name == 'completed' ? 'none' : '' }};">
+                                                        <a class="dropdown-item {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                            wire:click="forwardToDivision({{ $item->id }})">
+                                                            Forward
+                                                        </a>
+                                                    </li>
+                                                    @endcan
 
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3" style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) || $item->status->status_name == 'completed' ? 'none' : '' }};">
-                                                    <a href="#" class="menu-link px-3 {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
-                                                        wire:click="forwardToDivision({{ $item->id }})">
-                                                        Forward
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
-
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readDocumentHistory({{ $item->id }})">
-                                                        History
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            wire:click="readDocumentHistory({{ $item->id }})">
+                                                            History
+                                                        </a>
+                                                    </li>
+                                                </ul>
                                             </div>
-                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty
