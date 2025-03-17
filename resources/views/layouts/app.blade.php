@@ -124,6 +124,7 @@
         /* Media Query for Mobile Screens */
         @media (max-width: 767.98px) {
             .login-form {
+                background: rgb(255, 255, 255);
                 width: 100%;
                 /* Full width on mobile */
                 height: 100%;
