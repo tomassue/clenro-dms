@@ -140,6 +140,13 @@
                 transform: none;
                 /* Remove transform */
             }
+
+            .form {
+                margin-top: 20vh;
+                /* Add space from the top */
+                margin-bottom: 20vh;
+                /* Add space from the bottom */
+            }
         }
     </style>
 </head>
