@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{{ $title ?? 'Page Title' }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/cdo-seal.png') }}">
 </head>
 
 <head>
@@ -18,12 +19,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content="Metronic - Bootstrap 5 HTML, VueJS, React, Angular &amp; Laravel Admin Dashboard Theme" />
-    <meta property="og:url" content="https://keenthemes.com/metronic" />
-    <meta property="og:site_name" content="Keenthemes | Metronic" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CLENRO DTS" />
+    <meta property="og:url" content="https://services.cagayandeoro.gov.ph:8087/clenro-dts/" />
+    <meta property="og:site_name" content="CLENRO DTS" />
 
-    <link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+    <link rel="shortcut icon" href="{{ asset('images/cdo-seal.png') }}" />
 
     <!--begin::Fonts-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
