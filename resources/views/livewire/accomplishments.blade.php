@@ -63,7 +63,7 @@
 
                                                     <li>
                                                         <a class="dropdown-item"
-                                                            wire:click="readOutgoingHistory({{ $item->id }})">
+                                                            wire:click="readAccomplishmentHistory({{ $item->id }})">
                                                             History
                                                         </a>
                                                     </li>

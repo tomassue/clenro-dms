@@ -85,7 +85,8 @@ class Accomplishments extends Component
                     ->orWhereHas('accomplishment_category', function ($query) use ($search) {
                         $query->where('accomplishment_category_name', 'like', '%' . $search . '%');
                     })
-                    ->orWhere('no_of_participants', 'like', '%' . $search . '%');
+                    ->orWhere('no_of_participants', 'like', '%' . $search . '%')
+                    ->orWhere('date', 'like', '%' . $search . '%');
             });
         })
             ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
@@ -236,7 +237,7 @@ class Accomplishments extends Component
         }
     }
 
-    public function readOutgoingHistory($outgoing_id)
+    public function readAccomplishmentHistory($outgoing_id)
     {
         try {
             $this->outgoing_history = Activity::where('subject_type', AccomplishmentModel::class)
@@ -252,7 +253,7 @@ class Accomplishments extends Component
                         'causer' => $activity->causer?->name ?? 'System',
                         'created_at' => Carbon::parse($activity->created_at)->format('M d, Y h:i A'),
                         'changes' => collect($activity->properties['attributes'] ?? [])
-                            ->except(['id', 'created_at', 'updated_at', 'deleted_at']) // Exclude timestamps
+                            ->except(['id', 'user_id', 'created_at', 'updated_at', 'deleted_at']) // Exclude timestamps
                             ->map(function ($newValue, $key) use ($activity) {
                                 $oldValue = $activity->properties['old'][$key] ?? '-';
 

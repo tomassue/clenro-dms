@@ -258,7 +258,8 @@ class Requests extends Component
                     'contact_person_name',
                     'contact_person_number',
                     'description',
-                    'status_id'
+                    'status_id',
+                    'remarks'
                 )
             );
 

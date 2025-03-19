@@ -59,7 +59,7 @@
                     </div>
                     <div class="row">
                         <div class="col-4 fw-bold">Date and Time:</div>
-                        <div class="col-8">{{ $incoming_request_calendar_id->date_and_time ?? '-' }}</div>
+                        <div class="col-8">{{ $incoming_request_calendar_id->formatted_date_and_time ?? '-' }}</div>
                     </div>
                     <div class="row">
                         <div class="col-4 fw-bold">Contact person name:</div>

@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="accomplishmentModalLabel">{{ $editMode ? 'Update' : 'Add' }} Category</h1>
+                <h1 class="modal-title fs-5" id="accomplishmentModalLabel">{{ $editMode ? 'Update' : 'Add' }} Accomplishment</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" wire:click="clear"></button>
             </div>
             <div class="modal-body">
