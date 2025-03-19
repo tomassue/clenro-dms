@@ -66,8 +66,8 @@ Route::middleware(['auth'])->group(function () {
 /* -------------------------------------------------------------------------- */
 
 Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/clenro-dts/livewire/livewire.js', $handle);
+    return Route::get('/clenroms/livewire/livewire.js', $handle);
 });
 Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/clenro-dts/livewire/update', $handle);
+    return Route::post('/clenroms/livewire/update', $handle);
 });
