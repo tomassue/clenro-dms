@@ -1,4 +1,6 @@
 <div>
+    @include('livewire.templates.loading-state-indicator')
+
     <!--begin::Row-->
     <div class="row g-5 g-xl-8">
         <!--begin::Col-->
@@ -165,7 +167,7 @@
     $('.files').filepond({
         // required: true,
         allowFileTypeValidation: true,
-        acceptedFileTypes: ['image/jpg', 'image/png', 'application/pdf'],
+        acceptedFileTypes: ['image/jpeg', 'image/png', 'application/pdf'],
         labelFileTypeNotAllowed: 'File of invalid type',
         allowFileSizeValidation: true,
         maxFileSize: '10MB',

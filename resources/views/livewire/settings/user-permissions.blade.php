@@ -1,4 +1,6 @@
 <div>
+    @include('livewire.templates.loading-state-indicator')
+
     <!--begin::Row-->
     <div class="row g-5 g-xl-8">
         <!--begin::Col-->
