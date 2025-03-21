@@ -43,6 +43,7 @@
     <link href="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('plugins/virtual-select/virtual-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/virtual-select/tooltip.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/daterangepicker-master/daterangepicker.css') }}" />
     <!-- end::Plugins -->
 
     <style>
@@ -228,6 +229,8 @@
     <script src="{{ asset('plugins/custom/fullcalendar/fullcalendar.bundle.js') }}"></script>
     <script src="{{ asset('plugins/virtual-select/virtual-select.min.js') }}"></script>
     <script src="{{ asset('plugins/virtual-select/tooltip.min.js') }}"></script>
+    <script src="{{ asset('plugins/daterangepicker-master/moment.min.js') }}"></script>
+    <script src="{{ asset('plugins/daterangepicker-master/daterangepicker.js') }}"></script>
     <!-- end::Plugins -->
 </body>
 
@@ -260,5 +263,16 @@
         });
     });
 </script>
+
+<!-- Check if jquery exists -->
+<!-- <script type="text/javascript">
+    window.onload = function() {
+        if (window.jQuery) {
+            alert('jQuery is loaded');
+        } else {
+            alert('jQuery is not loaded');
+        }
+    }
+</script> -->
 
 </html>

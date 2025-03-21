@@ -5,7 +5,9 @@ namespace App\Livewire;
 use App\Models\AccomplishmentCategoryModel;
 use App\Models\AccomplishmentModel;
 use App\Models\FilesModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -20,7 +22,8 @@ class Accomplishments extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $search;
+    public $search,
+        $date_range_filter;
     public $editMode;
     public $accomplishment_id;
     public $accomplishment_category_id,
@@ -31,6 +34,7 @@ class Accomplishments extends Component
         $remarks;
     public $preview_file_id = [];
     public $outgoing_history = [];
+    public $pdf;
 
     public function mount()
     {
@@ -46,16 +50,14 @@ class Accomplishments extends Component
         return [
             'accomplishment_category_id' => 'required',
             'date' => 'required',
-            'details' => 'required',
-            'no_of_participants' => 'required'
+            'details' => 'required'
         ];
     }
 
     public function attributes()
     {
         return [
-            'accomplishment_category_id' => 'accomplishment category',
-            'no_of_participants' => 'no. of participants'
+            'accomplishment_category_id' => 'accomplishment category'
         ];
     }
 
@@ -79,16 +81,34 @@ class Accomplishments extends Component
 
     public function loadAccomplishments()
     {
-        return AccomplishmentModel::when($this->search, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('details', 'like', '%' . $search . '%')
-                    ->orWhereHas('accomplishment_category', function ($query) use ($search) {
-                        $query->where('accomplishment_category_name', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('no_of_participants', 'like', '%' . $search . '%')
-                    ->orWhere('date', 'like', '%' . $search . '%');
-            });
-        })
+        return AccomplishmentModel::query()
+            ->when($this->search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('details', 'like', '%' . $search . '%')
+                        ->orWhereHas('accomplishment_category', function ($query) use ($search) {
+                            $query->where('accomplishment_category_name', 'like', '%' . $search . '%');
+                        })
+                        ->orWhere('no_of_participants', 'like', '%' . $search . '%')
+                        ->orWhere('date', 'like', '%' . $search . '%');
+                });
+            })
+            ->when($this->date_range_filter, function ($query) {
+                // Check if the filter contains a range (indicated by ' - ')
+                if (str_contains($this->date_range_filter, ' - ')) {
+                    // It's a range, split and filter between dates
+                    $dates = explode(' - ', $this->date_range_filter);
+                    if (count($dates) === 2) {
+                        $startDate = Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+                        $endDate = Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+
+                        $query->whereBetween('date', [$startDate, $endDate]);
+                    }
+                } else {
+                    // It's a single date, filter exact match
+                    $singleDate = Carbon::createFromFormat('m/d/Y', trim($this->date_range_filter))->startOfDay();
+                    $query->whereDate('date', $singleDate);
+                }
+            })
             ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
                 $query->where('user_id', Auth::user()->id);
             })
@@ -302,5 +322,42 @@ class Accomplishments extends Component
             // throw $th;
             $this->dispatch('error');
         }
+    }
+
+    public function previewPDF()
+    {
+        $accomplishments = $this->loadAccomplishments();
+
+        $loadImage = fn($path) => base64_encode(File::get(public_path($path)));
+
+        if ($this->date_range_filter) {
+            $dateRange = explode(' - ', $this->date_range_filter);
+
+            if (count($dateRange) === 2) {
+                // If both start and end dates exist
+                $formattedDateRange = Carbon::parse($dateRange[0])->format('M d, Y') . ' - ' . Carbon::parse($dateRange[1])->format('M d, Y');
+            } else {
+                // If only one date exists
+                $formattedDateRange = Carbon::parse($dateRange[0])->format('M d, Y');
+            }
+        } else {
+            $formattedDateRange = '-';
+        }
+
+        $data = [
+            'accomplishments' => $accomplishments,
+            'cdo_full' => $loadImage('images/compressed_cdofull.png'),
+            'cdo_seal' => $loadImage('images/cdo-seal.png'),
+            'rise_logo' => $loadImage('images/compressed_rise.png'),
+            'watermark' => $loadImage('images/cdo-seal.png'),
+            'date' => $formattedDateRange
+        ];
+
+        $pdfData = PDF::loadView('livewire.pdf.accomplishments_pdf', $data)
+            ->setPaper('A4', 'portrait');
+
+        $this->pdf = 'data:application/pdf;base64,' . base64_encode($pdfData->output());
+
+        $this->dispatch('show-pdfModal');
     }
 }

@@ -41,7 +41,7 @@
                         @enderror
                     </div>
                     <div class="col-12 mb-10">
-                        <label class="required fw-bold fs-6 mb-2">No. of participants</label>
+                        <label class="fw-bold fs-6 mb-2">No. of participants</label>
                         <input type="number" class="form-control mb-3 mb-lg-0" wire:model="no_of_participants" />
                         @error('no_of_participants')
                         <div class="fv-plugins-message-container invalid-feedback">
