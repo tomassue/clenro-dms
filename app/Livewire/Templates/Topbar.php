@@ -95,12 +95,12 @@ class Topbar extends Component
                                             <div class="separator my-2"></div>
                                             <!--end::Menu separator-->
                                             <!--begin::Menu item-->
-                                            <div class="menu-item px-5">
+                                            <div class="menu-item px-5" style="display: none;">
                                                 <a href="#" class="menu-link px-5">My Profile</a>
                                             </div>
                                             <!--end::Menu item-->
                                             <!--begin::Menu separator-->
-                                            <div class="separator my-2"></div>
+                                            <div class="separator my-2" style="display: none;"></div>
                                             <!--end::Menu separator-->
                                             <!--begin::Menu item-->
                                             <div class="menu-item px-5">
