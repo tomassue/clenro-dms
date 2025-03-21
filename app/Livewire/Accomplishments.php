@@ -349,7 +349,7 @@ class Accomplishments extends Component
             'cdo_full' => $loadImage('images/compressed_cdofull.png'),
             'cdo_seal' => $loadImage('images/cdo-seal.png'),
             'rise_logo' => $loadImage('images/compressed_rise.png'),
-            'watermark' => $loadImage('images/cdo-seal.png'),
+            'watermark' => $loadImage('images/clenro.png'),
             'date' => $formattedDateRange
         ];
 

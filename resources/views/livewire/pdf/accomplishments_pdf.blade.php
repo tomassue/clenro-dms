@@ -106,8 +106,8 @@
     <!-- Header table with logo and title -->
     <table id="header">
         <tr>
-            <td style="text-align: left; padding-right: 50px;" width="20">
-                <img src="data:image/png;base64,{{ $cdo_full }}" alt="CDO Seal" width="130" />
+            <td style="text-align: left; padding-right: 20px;" width="20">
+                <img src="data:image/png;base64,{{ $cdo_full }}" alt="CDO Seal" width="140" />
             </td>
             <td style="text-align: center;">
                 Republic of the Philippines <br>
