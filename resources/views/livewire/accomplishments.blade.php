@@ -52,7 +52,7 @@
                                         <th>Date</th>
                                         <th>Details</th>
                                         <th>No. of Participants</th>
-                                        <th>Actions</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,7 +62,7 @@
                                         <td>{{ $item->formatted_date }}</td>
                                         <td>{{ $item->details }}</td>
                                         <td>{{ $item->no_of_participants ?? '' }}</td>
-                                        <td>
+                                        <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-sm btn-flush dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                                 </button>
@@ -70,6 +70,7 @@
                                                     @can('update accomplishments')
                                                     <li>
                                                         <a class="dropdown-item"
+                                                            style="cursor:pointer"
                                                             wire:click="readAccomplishment({{ $item->id }})">
                                                             Edit
                                                         </a>
@@ -78,6 +79,7 @@
 
                                                     <li>
                                                         <a class="dropdown-item"
+                                                            style="cursor:pointer"
                                                             wire:click="readAccomplishmentHistory({{ $item->id }})">
                                                             History
                                                         </a>

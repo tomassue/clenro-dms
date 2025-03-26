@@ -110,7 +110,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-12 mb-10" style="display: {{ auth()->user()->division_id != 1 || empty(auth()->user()->division_id) ? '' : 'none' }};">
+                    <div class="col-12 mb-10" style="display: {{ $editMode ? '' : 'none' }};">
                         <label class="fw-bold fs-6 mb-2">Remarks</label>
                         <input type="text" class="form-control mb-3 mb-lg-0" wire:model="remarks" />
                         @error('remarks')

@@ -40,7 +40,7 @@
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -53,59 +53,52 @@
                                         <td>
                                             <span class="badge {{ $item->deleted_at ? 'badge-light-danger' : 'badge-light-success' }}">{{ $item->deleted_at ? 'Inactive' : 'Active' }}</span>
                                         </td>
-                                        <td>
-                                            <!--begin::Trigger-->
-                                            <button type="button" style="white-space: nowrap;" class="btn btn-sm btn-icon-dark btn-outline mb-2"
-                                                data-kt-menu-trigger="click"
-                                                data-kt-menu-placement="bottom-start">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <!--end::Trigger-->
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-flush dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    @can('update user')
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            style="cursor:pointer"
+                                                            wire:click="readUser({{ $item->id }})">
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    @endcan
 
-                                            <!--begin::Menu-->
-                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-200px py-4"
-                                                data-kt-menu="true">
-                                                @can('update user')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readUser({{ $item->id }})">
-                                                        Edit
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
+                                                    @can('read user permissions')
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            style="cursor:pointer"
+                                                            wire:click="readUserPermissions({{ $item->id }})">
+                                                            Permissions
+                                                        </a>
+                                                    </li>
+                                                    @endcan
 
-                                                @can('read user permissions')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="readUserPermissions({{ $item->id }})">
-                                                        Permissions
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
+                                                    @can('update user')
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            style="cursor:pointer"
+                                                            wire:click="resetPassword({{ $item->id }})">
+                                                            Reset Password
+                                                        </a>
+                                                    </li>
+                                                    @endcan
 
-                                                @can('update user')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="resetPassword({{ $item->id }})">
-                                                        Reset Password
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
-
-                                                @can('delete user')
-                                                <!--begin::Menu item-->
-                                                <div class="menu-item px-3">
-                                                    <a href="#" class="menu-link px-3" wire:click="{{ $item->deleted_at ? 'restoreUser(' . $item->id . ')' : 'deleteUser(' . $item->id . ')' }}">
-                                                        {{ $item->deleted_at ? 'Activate' : 'Deactivate' }}
-                                                    </a>
-                                                </div>
-                                                <!--end::Menu item-->
-                                                @endcan
+                                                    @can('delete user')
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            style="cursor:pointer"
+                                                            wire:click="{{ $item->deleted_at ? 'restoreUser(' . $item->id . ')' : 'deleteUser(' . $item->id . ')' }}">
+                                                            {{ $item->deleted_at ? 'Activate' : 'Deactivate' }}
+                                                        </a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
                                             </div>
-                                            <!--end::Menu-->
                                         </td>
                                     </tr>
                                     @empty
