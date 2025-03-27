@@ -19,7 +19,7 @@ class ChangePassword extends Component
     {
         return [
             'current_password' => 'required|current_password',
-            'new_password' => 'required||min:8|regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+            'new_password' => 'required||min:8|regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&_])[A-Za-z\d@$!%*?&_]{8,}$/',
             'confirm_password' => 'required|same:new_password',
         ];
     }
