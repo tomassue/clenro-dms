@@ -109,7 +109,7 @@ class Accomplishments extends Component
                     $query->whereDate('date', $singleDate);
                 }
             })
-            ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id !== "", function ($query) {
+            ->when(!is_null(Auth::user()->division_id) && Auth::user()->division_id != "1" && Auth::user()->division_id != "8" && Auth::user()->division_id !== "", function ($query) {
                 $query->where('user_id', Auth::user()->id);
             })
             ->paginate(10);

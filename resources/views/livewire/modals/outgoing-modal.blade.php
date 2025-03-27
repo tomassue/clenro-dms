@@ -29,11 +29,15 @@
                         <label class="{{ $editMode ? '' : 'required' }} fw-bold fs-6 mb-2">Type</label>
                         <select class="form-select" aria-label="Select example" wire:model.live="type" {{ $editMode ? 'disabled' : '' }}>
                             <option value="">Open this select menu</option>
+                            @if(auth()->user()->division_id == 1 || empty(auth()->user()->division_id))
                             <option value="voucher">Voucher</option>
                             <option value="ris">RIS</option>
                             <option value="procurement">Procurement</option>
                             <option value="payroll">Payroll</option>
                             <option value="other">Other</option>
+                            @else
+                            <option value="other">Other</option>
+                            @endif
                         </select>
                         @error('type')
                         <div class="fv-plugins-message-container invalid-feedback">
