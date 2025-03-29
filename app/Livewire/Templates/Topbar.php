@@ -82,10 +82,15 @@ class Topbar extends Component
                                                     <!--end::Avatar-->
                                                     <!--begin::Username-->
                                                     <div class="d-flex flex-column">
-                                                        <div class="fw-bolder d-flex align-items-center fs-5">{{ Auth::user()->name }}
+                                                        <div class="fw-bolder d-flex align-items-center fs-5">
+                                                                {{ Auth::user()->name }}
                                                             <!-- <span class="badge badge-light-success fw-bolder fs-8 px-2 py-1 ms-2">Pro</span> -->
                                                         </div>
-                                                        <a href="#" class="fw-bold text-muted text-hover-primary fs-7">{{ Auth::user()->username }}</a>
+                                                        <a href="#" class="fw-bold text-muted text-hover-primary fs-7">
+                                                        <div class="col-8 text-truncate">
+                                                            {{ Auth::user()->username }}
+                                                        </div>
+                                                        </a>
                                                     </div>
                                                     <!--end::Username-->
                                                 </div>
