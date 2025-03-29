@@ -353,7 +353,15 @@ class Requests extends Component
                     $incoming_request->file_id = json_encode($updated_file_id);
                 }
 
-                $incoming_request->status_id = $this->status_id;
+                // Users other than the admin shouldn't be able to change the status
+                if (Auth::user()->division_id == 1 || empty(Auth::user()->division_id)) {
+                    $incoming_request->status_id = $this->status_id;
+                } else {
+                    if ($incoming_request->status_id == '15') { // Received
+                        $incoming_request->status_id = "2"; // Processed
+                    }
+                }
+
                 $incoming_request->remarks = $this->remarks;
                 $incoming_request->save();
             });
@@ -404,44 +412,147 @@ class Requests extends Component
     public function readDocumentHistory($incoming_request_id)
     {
         try {
-            // Fetch all statuses in a key-value pair: [status_id => status_name]
-            $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
-            $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
+            // // Fetch all statuses in a key-value pair: [status_id => status_name]
+            // $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+            // $divisionMap = DivisionModel::withTrashed()->pluck('division_name', 'id');
+
+            // $this->document_history = Activity::whereIn('subject_type', [IncomingRequestModel::class, ForwardedIncomingRequestModel::class])
+            //     ->whereIn('log_name', ['incoming request', 'forwarded incoming request'])
+            //     ->where('subject_id', $incoming_request_id)
+
+            //     /**
+            //      ** Here, I want to exclude created forwarded incoming request.
+            //      ** I can't directly use ->where('log_name', 'forwarded incoming request')->whereNot('event', 'created') because it it would only filter forwarded incoming request logs and completely exclude incoming request logs.
+            //      ** So, we need to include all incoming request and include forwarded incoming request logs, but exclude created forwarded incoming request logs.
+            //      */
+            //     ->where(function ($query) {
+            //         $query->where('log_name', '!=', 'forwarded incoming request') // or ->whereNot('log_name', 'forwarded incoming request')
+            //             ->orWhere(function ($subQuery) {
+            //                 $subQuery->where('log_name', 'forwarded incoming request')
+            //                     ->whereNot('event', 'created');
+            //             });
+            //     })
+            //     ->where(function ($query) {
+            //         $query->whereNotNull('properties->attributes->status_id')
+            //             ->orWhereNotNull('properties->attributes->is_opened'); //* Show only records with either status_id OR is_opened
+            //     })
+            //     ->orderBy('created_at', 'desc')
+            //     ->get()
+            //     ->map(function ($item) use ($statusMap, $divisionMap) {
+            //         // $oldStatusId = $item->properties['old']['status_id'] ?? null;
+            //         $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+            //         $attributes = $item->properties['attributes'] ?? [];
+
+            //         return [
+            //             // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+            //             'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
+            //             'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : (isset($attributes['is_opened']) ? ((bool) $attributes['is_opened'] ? 'Opened' : '-') : '-'), //* UPDATED attributes
+            //             'updated_by' => $item->causer ? $item->causer->name : 'System',
+            //             'subject_type' => $item->subject_type,
+            //             'is_opened' => isset($attributes['is_opened']) ? (bool) $attributes['is_opened'] : '-'
+            //         ];
+            //     });
 
             $this->document_history = Activity::whereIn('subject_type', [IncomingRequestModel::class, ForwardedIncomingRequestModel::class])
-                ->whereIn('log_name', ['incoming request', 'forwarded incoming request'])
                 ->where('subject_id', $incoming_request_id)
-
-                /**
-                 ** Here, I want to exclude created forwarded incoming request.
-                 ** I can't directly use ->where('log_name', 'forwarded incoming request')->whereNot('event', 'created') because it it would only filter forwarded incoming request logs and completely exclude incoming request logs.
-                 ** So, we need to include all incoming request and include forwarded incoming request logs, but exclude created forwarded incoming request logs.
-                 */
+                ->whereIn('log_name', ['incoming request', 'forwarded incoming request'])
                 ->where(function ($query) {
-                    $query->where('log_name', '!=', 'forwarded incoming request')
+                    $query->where(function ($subQuery) {
+                        // Include incoming request logs that are NOT 'created' events
+                        $subQuery->where('log_name', 'incoming request')
+                            ->whereNot('event', 'created');
+                    })
                         ->orWhere(function ($subQuery) {
+                            // Include forwarded incoming request logs that are NOT 'created' events
                             $subQuery->where('log_name', 'forwarded incoming request')
                                 ->whereNot('event', 'created');
                         });
                 })
-                ->where(function ($query) {
-                    $query->whereNotNull('properties->attributes->status_id')
-                        ->orWhereNotNull('properties->attributes->is_opened'); //* Show only records with either status_id OR is_opened
-                })
-                ->orderBy('created_at', 'desc')
+                ->latest()
                 ->get()
-                ->map(function ($item) use ($statusMap, $divisionMap) {
-                    // $oldStatusId = $item->properties['old']['status_id'] ?? null;
-                    $newStatusId = $item->properties['attributes']['status_id'] ?? null;
-                    $attributes = $item->properties['attributes'] ?? [];
-
+                ->map(function ($activity) {
                     return [
-                        // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
-                        'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
-                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : (isset($attributes['is_opened']) ? ((bool) $attributes['is_opened'] ? 'Opened' : '-') : '-'), //* UPDATED attributes
-                        'updated_by' => $item->causer ? $item->causer->name : 'System',
-                        'subject_type' => $item->subject_type,
-                        'is_opened' => isset($attributes['is_opened']) ? (bool) $attributes['is_opened'] : '-'
+                        'id' => $activity->id,
+                        'description' => $activity->description,
+                        'causer' => $activity->causer?->name ?? 'System',
+                        'created_at' => Carbon::parse($activity->created_at)->format('M d, Y h:i A'),
+                        'changes' => collect($activity->properties['attributes'] ?? [])
+                            ->except(['id', 'user_id', 'created_at', 'updated_at', 'deleted_at'])
+                            ->map(function ($newValue, $key) use ($activity) {
+                                $oldValue = $activity->properties['old'][$key] ?? '-';
+
+                                // Custom field name mapping
+                                $fieldName = match ($key) {
+                                    'incoming_request_no' => 'Incoming Request No.',
+                                    'office_or_barangay_or_organization_name' => 'Office/Barangay/Organization Name',
+                                    'date_requested' => 'Date Requested',
+                                    'category_id' => 'Category',
+                                    'date_and_time' => 'Date and Time',
+                                    'contact_person_name' => 'Contact Person Name',
+                                    'contact_person_number' => 'Contact Person Number',
+                                    'status_id' => 'Status',
+                                    'file_id' => 'Files',
+                                    'forwarded_to_division_id' => 'Forwarded To Division',
+                                    // Add other field mappings here as needed
+                                    // 'another_field' => 'Friendly Name',
+                                    default => ucfirst(str_replace('_', ' ', $key))
+                                };
+
+                                // Format date only fields
+                                if (in_array($key, ['date_requested', 'deleted_at'])) {
+                                    $oldValue = $oldValue !== '-' ? Carbon::parse($oldValue)->format('M d, Y') : '-';
+                                    $newValue = $newValue !== '-' ? Carbon::parse($newValue)->format('M d, Y') : '-';
+                                }
+
+                                // Format datetime only fields
+                                if (in_array($key, ['date_and_time'])) {
+                                    $oldValue = $oldValue !== '-' ? Carbon::parse($oldValue)->format('M d, Y h:i A') : '-';
+                                    $newValue = $newValue !== '-' ? Carbon::parse($newValue)->format('M d, Y h:i A') : '-';
+                                }
+
+                                // Convert array values to a string (e.g., file IDs to filenames)
+                                if ($key === 'file_id') {
+                                    // Ensure values are decoded from JSON if stored as a string
+                                    $oldValue = is_string($oldValue) ? json_decode($oldValue, true) : $oldValue;
+                                    $newValue = is_string($newValue) ? json_decode($newValue, true) : $newValue;
+
+                                    if (is_array($oldValue)) {
+                                        $oldValue = FilesModel::whereIn('id', $oldValue)->pluck('file_name')->toArray();
+                                        $oldValue = !empty($oldValue) ? implode(', ', $oldValue) : '-';
+                                    }
+
+                                    if (is_array($newValue)) {
+                                        $newValue = FilesModel::whereIn('id', $newValue)->pluck('file_name')->toArray();
+                                        $newValue = !empty($newValue) ? implode(', ', $newValue) : '-';
+                                    }
+                                }
+
+                                // Format status values
+                                if ($key === 'status_id') {
+                                    $oldValue = $oldValue !== '-' ? StatusModel::find($oldValue)?->status_name : '-';
+                                    $newValue = $newValue !== '-' ? StatusModel::find($newValue)?->status_name : '-';
+                                }
+
+                                // Format category values
+                                if ($key === 'category_id') {
+                                    $oldValue = $oldValue !== '-' ? IncomingRequestCategoryModel::find($oldValue)?->incoming_request_category_name : '-';
+                                    $newValue = $newValue !== '-' ? IncomingRequestCategoryModel::find($newValue)?->incoming_request_category_name : '-';
+                                }
+
+                                //Format is_opened values from boolean to Yes/No
+                                if ($key === 'is_opened') {
+                                    $oldValue = $oldValue == '1' ? 'Yes' : 'No';
+                                    $newValue = $newValue == '1' ? 'Yes' : 'No';
+                                }
+
+                                return [
+                                    'field' => $fieldName, // Use the custom field name
+                                    'old' => $oldValue,
+                                    'new' => $newValue,
+                                ];
+                            })
+                            ->values()
+                            ->toArray()
                     ];
                 });
 
