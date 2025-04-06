@@ -807,29 +807,100 @@ class Outgoing extends Component
     public function readOutgoingHistory($outgoing_id)
     {
         try {
-            // Fetch all statuses in a key-value pair: [status_id => status_name]
-            $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+            // // Fetch all statuses in a key-value pair: [status_id => status_name]
+            // $statusMap = StatusModel::withTrashed()->pluck('status_name', 'id');
+
+            // $this->document_history = Activity::where('subject_type', OutgoingModel::class)
+            //     ->where('subject_id', $outgoing_id)
+            //     ->where('log_name', 'outgoing')
+            //     ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
+            //     ->orderBy('created_at', 'desc')
+            //     ->get()
+            //     ->map(function ($item) use ($statusMap) {
+            //         $oldStatusId = $item->properties['old']['status_id'] ?? null;
+            //         $newStatusId = $item->properties['attributes']['status_id'] ?? null;
+
+            //         return [
+            //             // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
+            //             'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
+            //             'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
+            //             'updated_by' => $item->causer ? $item->causer->name : 'System'
+            //         ];
+            //     });
 
             $this->document_history = Activity::where('subject_type', OutgoingModel::class)
                 ->where('subject_id', $outgoing_id)
                 ->where('log_name', 'outgoing')
-                ->whereNotNull('properties->attributes->status_id') //* Logs with changes in status_id ONLY
-                ->orderBy('created_at', 'desc')
+                ->latest()
                 ->get()
-                ->map(function ($item) use ($statusMap) {
-                    $oldStatusId = $item->properties['old']['status_id'] ?? null;
-                    $newStatusId = $item->properties['attributes']['status_id'] ?? null;
-
+                ->map(function ($activity) {
                     return [
-                        // 'incoming_request_no' => $item->subject->incoming_request_no ?? 'N/A',
-                        'updated_at' => Carbon::parse($item->updated_at)->format('M d Y g:i A'),
-                        'status' => $newStatusId ? $statusMap[$newStatusId] ?? 'Unknown Status' : 'N/A', //* UPDATED attributes
-                        'updated_by' => $item->causer ? $item->causer->name : 'System'
+                        'id' => $activity->id,
+                        'description' => $activity->description,
+                        'causer' => $activity->causer?->name ?? 'System',
+                        'created_at' => Carbon::parse($activity->created_at)->format('M d, Y h:i A'),
+                        'changes' => collect($activity->properties['attributes'] ?? [])
+                            ->except(['id', 'user_id', 'created_at', 'updated_at', 'deleted_at', 'type_id', 'type_type'])
+                            ->map(function ($newValue, $key) use ($activity) {
+                                $oldValue = $activity->properties['old'][$key] ?? '-';
+
+                                $fieldName = match ($key) {
+                                    'status_id' => 'Status',
+                                    'file_id' => 'File',
+                                    // Add other field mappings here as needed
+                                    // 'another_field' => 'Friendly Name',
+                                    default => ucfirst(str_replace('_', ' ', $key))
+                                };
+
+                                // Format date values
+                                if ($key === 'date') {
+                                    $oldValue = $oldValue !== '-' ? Carbon::parse($oldValue)->format('M d, Y') : '-';
+                                    $newValue = $newValue !== '-' ? Carbon::parse($newValue)->format('M d, Y') : '-';
+                                }
+
+                                // Format dateandtime values
+                                // if (in_array($key, ['created_at', 'updated_at'])) {
+                                //     $oldValue = $oldValue !== '-' ? Carbon::parse($oldValue)->format('M d, Y g:i A') : '-';
+                                //     $newValue = $newValue !== '-' ? Carbon::parse($newValue)->format('M d, Y g:i A') : '-';
+                                // }
+
+                                // Convert array values to a string (e.g., file IDs to filenames)
+                                if ($key === 'file_id') {
+                                    // Ensure values are decoded from JSON if stored as a string
+                                    $oldValue = is_string($oldValue) ? json_decode($oldValue, true) : $oldValue;
+                                    $newValue = is_string($newValue) ? json_decode($newValue, true) : $newValue;
+
+                                    if (is_array($oldValue)) {
+                                        $oldValue = FilesModel::whereIn('id', $oldValue)->pluck('file_name')->toArray();
+                                        $oldValue = !empty($oldValue) ? implode(', ', $oldValue) : '-';
+                                    }
+
+                                    if (is_array($newValue)) {
+                                        $newValue = FilesModel::whereIn('id', $newValue)->pluck('file_name')->toArray();
+                                        $newValue = !empty($newValue) ? implode(', ', $newValue) : '-';
+                                    }
+                                }
+
+                                // Format status values
+                                if ($key === 'status_id') {
+                                    $oldValue = $oldValue !== '-' ? StatusModel::find($oldValue)?->status_name : '-';
+                                    $newValue = $newValue !== '-' ? StatusModel::find($newValue)?->status_name : '-';
+                                }
+
+                                return [
+                                    'field' => $fieldName, // Use the custom field name
+                                    'old' => $oldValue,
+                                    'new' => $newValue,
+                                ];
+                            })
+                            ->values()
+                            ->toArray()
                     ];
                 });
 
             $this->dispatch('show-documentHistoryModal');
         } catch (\Throwable $th) {
+            // throw $th;
             $this->dispatch('error');
         }
     }

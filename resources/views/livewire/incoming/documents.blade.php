@@ -57,7 +57,7 @@
                                         <th>Date</th>
                                         <th>Details</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -92,6 +92,7 @@
                                                 <ul class="dropdown-menu">
                                                     <li style="display: {{ $item->status->status_name == 'completed' ? '' : 'none' }};">
                                                         <a class="dropdown-item"
+                                                            style="cursor:pointer"
                                                             wire:click="viewIncomingDocument({{ $item->id }})">
                                                             View
                                                         </a>
@@ -100,13 +101,15 @@
                                                     @can('update incoming documents')
                                                     <li style="display: {{ $item->status->status_name == 'completed' ? 'none' : '' }};">
                                                         <a class="dropdown-item {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                            style="cursor:pointer"
                                                             wire:click="readIncomingDocument({{ $item->id }})">
-                                                            View
+                                                            Edit
                                                         </a>
                                                     </li>
 
                                                     <li style="display: {{ auth()->user()->division_id != 1 && !empty(auth()->user()->division_id) || $item->status->status_name == 'completed' ? 'none' : '' }};">
                                                         <a class="dropdown-item {{ ($item->status->status_name == 'completed' && (auth()->user()->division_id != 1 || !auth()->user()->division_id)) ? 'disabled-link' : '' }}"
+                                                            style="cursor:pointer"
                                                             wire:click="forwardToDivision({{ $item->id }})">
                                                             Forward
                                                         </a>
@@ -115,6 +118,7 @@
 
                                                     <li>
                                                         <a class="dropdown-item"
+                                                            style="cursor:pointer"
                                                             wire:click="readDocumentHistory({{ $item->id }})">
                                                             History
                                                         </a>
